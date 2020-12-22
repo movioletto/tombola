@@ -1,11 +1,16 @@
 package it.movioletto.web.tabellone;
 
+import it.movioletto.dao.MessaggioDao;
 import it.movioletto.dao.NumeroUscitoDao;
 import it.movioletto.dao.StanzaDao;
 import it.movioletto.dao.TabellaDao;
 import it.movioletto.service.TabelloneService;
 import it.movioletto.web.tabellone.data.TabelloneData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
@@ -24,8 +29,13 @@ import java.util.*;
 @RequestMapping("/tabellone")
 public class TabelloneController {
 
+	private final SimpMessagingTemplate simpMessagingTemplate;
 	@Autowired
 	private TabelloneService tabelloneService;
+
+	public TabelloneController(SimpMessagingTemplate simpMessagingTemplate) {
+		this.simpMessagingTemplate = simpMessagingTemplate;
+	}
 
 	@GetMapping("/new")
 	public String getNew(Model model) {
@@ -43,7 +53,7 @@ public class TabelloneController {
 	@GetMapping("/stanza/{idStanza}")
 	public String getTabellone(Model model, @PathVariable("idStanza") String idStanza, HttpServletRequest request) {
 
-		if(!tabelloneService.existStanza(idStanza)) {
+		if (!tabelloneService.existStanza(idStanza)) {
 			return "redirect:/";
 		}
 
@@ -78,7 +88,7 @@ public class TabelloneController {
 	@GetMapping("/stanza/{idStanza}/numero")
 	public RedirectView getNumeroTabellone(@PathVariable("idStanza") String idStanza, RedirectAttributes redirectAttributes) {
 
-		if(!tabelloneService.existStanza(idStanza)) {
+		if (!tabelloneService.existStanza(idStanza)) {
 			return new RedirectView("/");
 		}
 
@@ -88,12 +98,19 @@ public class TabelloneController {
 		int numeroEstratto;
 		do {
 			numeroEstratto = random.nextInt(90) + 1;
-		} while(numeriUsciti.contains(new NumeroUscitoDao(numeroEstratto)));
+		} while (numeriUsciti.contains(new NumeroUscitoDao(numeroEstratto)));
 
 		tabelloneService.saveNumeroEstratto(idStanza, numeroEstratto);
 
-		redirectAttributes.addFlashAttribute("numeroEstratto", numeroEstratto);
+		simpMessagingTemplate.convertAndSend("/partita/stanza/" + idStanza, new MessaggioDao(numeroEstratto));
 
+		redirectAttributes.addFlashAttribute("numeroEstratto", numeroEstratto);
 		return new RedirectView("/tombola/tabellone/stanza/" + idStanza);
+	}
+
+	@MessageMapping("/stanza/{idStanza}")
+	@SendTo("/partita/stanza/{idStanza}")
+	public MessaggioDao simple(@DestinationVariable String idStanza, MessaggioDao messaggioDao) {
+		return messaggioDao;
 	}
 }
