@@ -36,7 +36,7 @@
 						</h5>
 						<p class="card-testo">
                             <#if data.stanza.idStanza??>
-								<a href="<@spring.url '/cartella/new/${data.stanza.idStanza}' />">http://tombola-semplice.herokuapp.com<@spring.url '/cartella/new/${data.stanza.idStanza}' /></a>
+								<a href="<@spring.url '/cartella/new/${data.stanza.idStanza}' />" id="link-stanza"></a>
                             </#if>
 						</p>
 					</div>
