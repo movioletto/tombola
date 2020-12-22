@@ -1,0 +1,102 @@
+body {
+    font-family: 'Titillium Web', sans-serif;
+}
+
+.titolo-home {
+    padding-top: 100px;
+    padding-bottom: 50px;
+    text-align: center;
+    font-size: 100px;
+}
+
+.titolo {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    text-align: center;
+    font-size: 30px;
+}
+
+.bottone-home {
+    min-height: 50px;
+    font-size: 30px;
+    text-align: center;
+    padding: 20px;
+}
+
+.bottone-home a {
+    display: block;
+}
+
+.bottone-home a:any-link {
+    text-decoration: none;
+}
+
+.card {
+    margin-bottom: 20px;
+}
+
+.card-titolo {
+    display: unset;
+    font-weight: bold;
+}
+
+.card-testo {
+    display: unset;
+    text-align: right;
+}
+
+.card.numero-estratto {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.lista-numeri-usciti {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.numero-uscito {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border: 2px solid red;
+    border-radius: 50px;
+    text-align: center;
+    padding-block: 10px;
+    color: red;
+}
+
+.separatore {
+    border-left: 2px solid red;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+table {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+table td {
+    border: 1px solid;
+    text-align: center;
+    height: 50px;
+    font-size: 30px;
+}
+
+.numero-uscito-tabella {
+    display: block;
+    background-color: red;
+}
+
+.numero-tabella {
+    display: block;
+}
+
+.estrai-numero {
+    font-size: 30px;
+    margin: auto;
+    display: block;
+    width: 50%;
+}
