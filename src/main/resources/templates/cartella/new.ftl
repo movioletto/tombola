@@ -13,7 +13,7 @@
 							<label for="idStanza" class="form-label">ID Stanza:</label>
 						</div>
 						<div class="mb-3">
-							<input id="idStanza" name="idStanza" type="text" class="form-control">
+							<input id="idStanza" name="idStanza" type="text" class="form-control" maxlength="10" required>
 						</div>
 						<div class="mb-3">
 							<button type="submit" class="btn btn-primary">Entra</button>
