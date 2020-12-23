@@ -73,7 +73,7 @@
 		</div>
     </#if>
 
-	<div id="numeri-usciti" class="card d-none">
+	<div id="numeri-usciti" class="card ${ (data?? && data.numeroUscitoList?? && data.numeroUscitoList?has_content)?string('', 'd-none') }">
 		<div class="card-body">
 			<h5 class="card-title">
 				Numero usciti:
