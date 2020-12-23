@@ -3,15 +3,30 @@
 <#include "../layout/header.ftl" />
 <script type="text/javascript">
 	$(function () {
+		let autoSelezione = $('#auto-selezione');
+		autoSelezione.change(function () {
+			if ($(this).is(":checked")) {
+				$('.numero-uscito').each(function () {
+					let casellaNumeroCorrente = $('#numero-' + $(this).html());
+					if (!casellaNumeroCorrente.hasClass('numero-uscito-tabella')) {
+						casellaNumeroCorrente.addClass('numero-uscito-tabella');
+					}
+				});
+			}
+		});
 
-		function aggiornaNumeriUsciti(messageOutput) {
+		function aggiornaNumeriUsciti(data) {
 			let objNumeriUsciti = $('#numeri-usciti');
 
 			if (objNumeriUsciti.find('.separatore')) {
 				objNumeriUsciti.find('.separatore').remove();
 			}
 
-			$('.lista-numeri-usciti').prepend('<span class="numero-uscito">' + messageOutput.numeroUscito + '</span><span class="separatore"></span>');
+			$('.lista-numeri-usciti').prepend('<span class="numero-uscito">' + data.numeroUscito + '</span><span class="separatore"></span>');
+
+			if (autoSelezione.is(":checked")) {
+				$('#numero-' + data.numeroUscito).addClass('numero-uscito-tabella');
+			}
 
 			if (objNumeriUsciti.hasClass('d-none')) {
 				objNumeriUsciti.removeClass('d-none');
@@ -21,8 +36,8 @@
 		let socket = new SockJS('/tombola/stanza');
 		let stompClient = Stomp.over(socket);
 		stompClient.connect({}, function (frame) {
-			stompClient.subscribe('/partita/stanza/${data.stanza.idStanza}', function (messageOutput) {
-				aggiornaNumeriUsciti(JSON.parse(messageOutput.body));
+			stompClient.subscribe('/partita/stanza/${data.stanza.idStanza}', function (data) {
+				aggiornaNumeriUsciti(JSON.parse(data.body));
 			});
 		});
 
@@ -68,12 +83,23 @@
                             </#if>
 						</p>
 					</div>
+					<div class="col-sm">
+						<h5 class="card-titolo">
+							<label for="auto-selezione">
+								Selezione automatica:
+							</label>
+						</h5>
+						<p class="card-testo">
+							<input id="auto-selezione" type="checkbox" class="apple-switch">
+						</p>
+					</div>
 				</div>
 			</div>
 		</div>
     </#if>
 
-	<div id="numeri-usciti" class="card ${ (data?? && data.numeroUscitoList?? && data.numeroUscitoList?has_content)?string('', 'd-none') }">
+	<div id="numeri-usciti"
+	     class="card ${ (data?? && data.numeroUscitoList?? && data.numeroUscitoList?has_content)?string('', 'd-none') }">
 		<div class="card-body">
 			<h5 class="card-title">
 				Numero usciti:
@@ -105,7 +131,8 @@
                             <#list riga as numeroRiga>
 								<td style="width: 11.11%;">
                                     <#if numeroRiga.numero != 0>
-										<span class="numero-tabella ${numeroRiga.uscito?string('numero-uscito-tabella', '')}">
+										<span id="numero-${numeroRiga.numero}"
+										      class="numero-tabella ${numeroRiga.uscito?string('numero-uscito-tabella', '')}">
                                             ${numeroRiga.numero}
 	                                    </span>
                                     </#if>
