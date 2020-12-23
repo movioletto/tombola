@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
@@ -19,24 +18,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/tabellone")
 public class TabelloneController {
 
-	private final SimpMessagingTemplate simpMessagingTemplate;
 	@Autowired
 	private TabelloneService tabelloneService;
-
-	public TabelloneController(SimpMessagingTemplate simpMessagingTemplate) {
-		this.simpMessagingTemplate = simpMessagingTemplate;
-	}
 
 	@GetMapping("/new")
 	public String getNew(Model model) {
@@ -45,7 +40,7 @@ public class TabelloneController {
 
 	@PostMapping("/newAct")
 	public String getNewAct(Model model, String nome) {
-		if(StringUtils.isBlank(nome)) {
+		if (StringUtils.isBlank(nome)) {
 			return "redirect:/tabellone/new";
 		}
 
@@ -87,29 +82,6 @@ public class TabelloneController {
 		model.addAttribute("data", data);
 
 		return "tabellone/tabellone";
-	}
-
-	@GetMapping("/stanza/{idStanza}/numero")
-	public RedirectView getNumeroTabellone(@PathVariable("idStanza") String idStanza, RedirectAttributes redirectAttributes) {
-
-		if (!tabelloneService.existStanza(idStanza)) {
-			return new RedirectView("/");
-		}
-
-		List<NumeroUscitoDao> numeriUsciti = tabelloneService.getNumeriUsciti(idStanza);
-
-		Random random = new Random();
-		int numeroEstratto;
-		do {
-			numeroEstratto = random.nextInt(90) + 1;
-		} while (numeriUsciti.contains(new NumeroUscitoDao(numeroEstratto)));
-
-		tabelloneService.saveNumeroEstratto(idStanza, numeroEstratto);
-
-		simpMessagingTemplate.convertAndSend("/partita/stanza/" + idStanza, new MessaggioDao(numeroEstratto));
-
-		redirectAttributes.addFlashAttribute("numeroEstratto", numeroEstratto);
-		return new RedirectView("/tombola/tabellone/stanza/" + idStanza);
 	}
 
 	@MessageMapping("/stanza/{idStanza}")
