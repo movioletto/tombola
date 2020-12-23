@@ -13,7 +13,7 @@
 							<label for="nome" class="form-label">Nome partita:</label>
 						</div>
 						<div class="mb-3">
-							<input id="nome" name="nome" type="text" class="form-control">
+							<input id="nome" name="nome" type="text" class="form-control" maxlength="200" required>
 						</div>
 						<div class="mb-3">
 							<button type="submit" class="btn btn-primary">Crea</button>

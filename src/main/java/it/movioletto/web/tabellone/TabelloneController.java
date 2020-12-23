@@ -6,6 +6,7 @@ import it.movioletto.dao.StanzaDao;
 import it.movioletto.dao.TabellaDao;
 import it.movioletto.service.TabelloneService;
 import it.movioletto.web.tabellone.data.TabelloneData;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -44,8 +45,11 @@ public class TabelloneController {
 
 	@PostMapping("/newAct")
 	public String getNewAct(Model model, String nome) {
+		if(StringUtils.isBlank(nome)) {
+			return "redirect:/tabellone/new";
+		}
 
-		StanzaDao stanzaDao = tabelloneService.creaStanza(nome);
+		StanzaDao stanzaDao = tabelloneService.creaStanza(StringUtils.abbreviate(nome, 200));
 
 		return "redirect:/tabellone/stanza/" + stanzaDao.getIdStanza();
 	}
