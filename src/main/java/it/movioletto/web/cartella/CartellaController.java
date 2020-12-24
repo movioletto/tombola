@@ -56,7 +56,7 @@ public class CartellaController {
 	}
 
 	@GetMapping("/stanza/{idStanza}/cartella/{idTabella}")
-	public String getTabellone(Model model, @PathVariable("idStanza") String idStanza, @PathVariable("idTabella") String idTabella) {
+	public String getTabella(Model model, @PathVariable("idStanza") String idStanza, @PathVariable("idTabella") String idTabella) {
 
 		if (!tabelloneService.existStanza(idStanza) || !cartellaService.existTabella(idTabella, idStanza)) {
 			return "redirect:/";

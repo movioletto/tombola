@@ -2,6 +2,8 @@ package it.movioletto.web.tabellone;
 
 import it.movioletto.dao.MessaggioDao;
 import it.movioletto.dao.NumeroUscitoDao;
+import it.movioletto.dao.TabellaDao;
+import it.movioletto.service.CartellaService;
 import it.movioletto.service.TabelloneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -22,6 +24,9 @@ public class TabelloneRestController {
 
 	@Autowired
 	private TabelloneService tabelloneService;
+
+	@Autowired
+	private CartellaService cartellaService;
 
 	public TabelloneRestController(SimpMessagingTemplate simpMessagingTemplate) {
 		this.simpMessagingTemplate = simpMessagingTemplate;
@@ -47,6 +52,21 @@ public class TabelloneRestController {
 		simpMessagingTemplate.convertAndSend("/partita/stanza/" + idStanza, new MessaggioDao(numeroEstratto));
 
 		return new MessaggioDao(numeroEstratto);
+	}
+
+	@GetMapping("/stanza/{idStanza}/tabella/{idTabella}")
+	public TabellaDao getTabellaStanza(@PathVariable("idStanza") String idStanza, @PathVariable("idTabella") String idTabella) {
+
+		if (!tabelloneService.existStanza(idStanza) || !cartellaService.existTabella(idTabella, idStanza)) {
+			return null;
+		}
+
+		List<NumeroUscitoDao> numeriUsciti = tabelloneService.getNumeriUsciti(idStanza);
+
+		TabellaDao tabella = cartellaService.getTabella(idTabella, idStanza);
+		tabella.setNumeriUsciti(numeriUsciti);
+
+		return tabella;
 	}
 
 }
