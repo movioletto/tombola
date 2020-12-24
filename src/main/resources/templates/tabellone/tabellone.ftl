@@ -46,7 +46,9 @@
 				objGiocatoriPresenti.find('#nessun-giocatore-presente').remove();
 			}
 
-			$('.lista-giocatori-presenti').prepend('<span class="giocatore-presente btn btn-primary">' + camelCaseInTestoNormale(data.idTabella) + '</span>');
+			if(objGiocatoriPresenti.find('#giocatore-' + data.idTabella).length === 0) {
+				$('.lista-giocatori-presenti').prepend('<span id="giocatore-' + data.idTabella + '" class="giocatore-presente btn btn-primary">' + camelCaseInTestoNormale(data.idTabella) + '</span>');
+			}
 		}
 
 		let socket = new SockJS('/tombola/giocatore');
@@ -188,7 +190,7 @@
                 <#if data?? && data.stanza?? && data.stanza.giocatorePresenteList?? && data.stanza.giocatorePresenteList?has_content>
                     <#list data.stanza.giocatorePresenteList as giocatorePresente>
                         <#if giocatorePresente??>
-							<span class="giocatore-presente btn btn-primary">
+							<span id="giocatore-${giocatorePresente}" class="giocatore-presente btn btn-primary">
 								${utility.camelCaseInStringaNormale(giocatorePresente)}
 							</span>
                         </#if>
