@@ -59,6 +59,7 @@ public class TabelloneController {
 		TabelloneData data = new TabelloneData();
 
 		StanzaDao stanzaDao = tabelloneService.getStanza(idStanza);
+		stanzaDao.setGiocatorePresenteList(tabelloneService.getGiocatoriPresenti(idStanza));
 		data.setStanza(stanzaDao);
 
 		List<NumeroUscitoDao> numeriUsciti = tabelloneService.getNumeriUsciti(idStanza);
@@ -86,7 +87,8 @@ public class TabelloneController {
 
 	@MessageMapping("/stanza/{idStanza}")
 	@SendTo("/partita/stanza/{idStanza}")
-	public MessaggioDao simple(@DestinationVariable String idStanza, MessaggioDao messaggioDao) {
+	public MessaggioDao invioAggiornamentoNumeri(MessaggioDao messaggioDao) {
 		return messaggioDao;
 	}
+
 }

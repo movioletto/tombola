@@ -16,4 +16,6 @@ public interface TabelloneService {
 	void saveNumeroEstratto(String idStanza, int numeroEstratto);
 
 	boolean existStanza(String idStanza);
+
+	List<String> getGiocatoriPresenti(String idStanza);
 }

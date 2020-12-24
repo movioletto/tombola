@@ -1,13 +1,14 @@
 package it.movioletto.service.impl;
 
-import it.movioletto.dao.NumeroDao;
 import it.movioletto.dao.NumeroUscitoDao;
 import it.movioletto.dao.StanzaDao;
 import it.movioletto.model.NumeroUscitoEntity;
 import it.movioletto.model.NumeroUscitoEntityKey;
 import it.movioletto.model.StanzaEntity;
+import it.movioletto.model.TabellaEntity;
 import it.movioletto.repository.NumeroUscitoRepository;
 import it.movioletto.repository.StanzaRepository;
+import it.movioletto.repository.TabellaRepository;
 import it.movioletto.service.TabelloneService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class TabelloneServiceImpl implements TabelloneService {
 
 	@Autowired
 	private NumeroUscitoRepository numeroUscitoRepository;
+
+	@Autowired
+	private TabellaRepository tabellaRepository;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -86,5 +90,18 @@ public class TabelloneServiceImpl implements TabelloneService {
 		Optional<StanzaEntity> entityOptional = stanzaRepository.findById(idStanza);
 
 		return entityOptional.isPresent();
+	}
+
+	@Override
+	public List<String> getGiocatoriPresenti(String idStanza) {
+		List<String> out = new ArrayList<>();
+
+		Optional<List<TabellaEntity>> entityListOptional = tabellaRepository.findAllByIdIdStanza(idStanza);
+
+		entityListOptional.ifPresent(entityList -> {
+			entityList.forEach(entity -> out.add(entity.getId().getIdTabella()));
+		});
+
+		return out;
 	}
 }

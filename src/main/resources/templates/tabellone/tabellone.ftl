@@ -15,20 +15,45 @@
 				success: function (data) {
 					let objNumeriUsciti = $('#numeri-usciti');
 
-					if (objNumeriUsciti.find('.separatore')) {
+					let nessunNumeroUscito = objNumeriUsciti.find('#nessun-numero-uscito');
+					if (nessunNumeroUscito.length !== 0) {
+						objNumeriUsciti.find('#nessun-numero-uscito').remove();
+					}
+
+					if (objNumeriUsciti.find('.separatore').length !== 0) {
 						objNumeriUsciti.find('.separatore').remove();
 					}
 
-					$('.lista-numeri-usciti').prepend('<span class="numero-uscito">' + data.numeroUscito + '</span><span class="separatore"></span>');
-
-					if (objNumeriUsciti.hasClass('d-none')) {
-						objNumeriUsciti.removeClass('d-none');
-					}
+					$('.lista-numeri-usciti').prepend('<span class="numero-uscito">' + data.numeroUscito + '</span>' + (nessunNumeroUscito.length !== 0 ? '' : '<span class="separatore"></span>'));
 
 					$('#numero-' + data.numeroUscito).addClass('numero-uscito-tabella');
 
 					$('#estrai-numero').removeAttr('disabled');
 				}
+			});
+		});
+
+		function aggiornaGiocatori(data) {
+			let numeroGiocatori = $('#numero-giocatori');
+
+			if (Number.isInteger(parseInt(numeroGiocatori.html()))) {
+				numeroGiocatori.html(parseInt(numeroGiocatori.html()) + 1);
+			}
+
+			let objGiocatoriPresenti = $('#giocatori-presenti');
+
+			if (objGiocatoriPresenti.find('#nessun-giocatore-presente').length !== 0) {
+				objGiocatoriPresenti.find('#nessun-giocatore-presente').remove();
+			}
+
+			$('.lista-giocatori-presenti').prepend('<span class="giocatore-presente btn btn-primary">' + data.idTabella + '</span>');
+		}
+
+		let socket = new SockJS('/tombola/giocatore');
+		let stompClient = Stomp.over(socket);
+		stompClient.connect({}, function (frame) {
+			stompClient.subscribe('/partita/giocatore/${data.stanza.idStanza}', function (data) {
+				aggiornaGiocatori(JSON.parse(data.body));
 			});
 		});
 
@@ -48,6 +73,20 @@
 						<p class="card-testo">
                             <#if data.stanza.nome??>
                                 ${data.stanza.nome}
+                            <#else>
+								-
+                            </#if>
+						</p>
+					</div>
+					<div class="col-sm">
+						<h5 class="card-titolo">
+							Numero giocatori:
+						</h5>
+						<p id="numero-giocatori" class="card-testo">
+                            <#if data.stanza.giocatorePresenteList??>
+                                ${data.stanza.giocatorePresenteList?size}
+                            <#else>
+								0
                             </#if>
 						</p>
 					</div>
@@ -58,6 +97,8 @@
 						<p class="card-testo">
                             <#if data.stanza.idStanza??>
                                 ${data.stanza.idStanza}
+                            <#else>
+								-
                             </#if>
 						</p>
 					</div>
@@ -70,6 +111,8 @@
 						<p class="card-testo">
                             <#if data.stanza.idStanza??>
 								<a href="<@spring.url '/cartella/new/${data.stanza.idStanza}' />" id="link-stanza"></a>
+                            <#else>
+								-
                             </#if>
 						</p>
 					</div>
@@ -78,8 +121,7 @@
 		</div>
     </#if>
 
-	<div id="numeri-usciti"
-	     class="card ${ (data?? && data.numeroUscitoList?? && data.numeroUscitoList?has_content)?string('', 'd-none') }">
+	<div id="numeri-usciti" class="card">
 		<div class="card-body">
 			<h5 class="card-title">
 				Numero usciti:
@@ -96,6 +138,8 @@
                             </#if>
                         </#if>
                     </#list>
+                <#else>
+					<span id="nessun-numero-uscito">Nessun numero estratto</span>
                 </#if>
 			</p>
 		</div>
@@ -115,7 +159,7 @@
 								<td>
                                     <#if numeroRiga.numero != 0>
 										<span id="numero-${numeroRiga.numero}"
-										      class="numero-tabella ${numeroRiga.uscito?string('numero-uscito-tabella', '')}">
+										      class="${numeroRiga.uscito?string('numero-uscito-tabella', '')}">
                                             ${numeroRiga.numero}
                                         </span>
                                     </#if>
@@ -134,6 +178,27 @@
     </#if>
 
 	<button id="estrai-numero" class="btn btn-danger estrai-numero">Estrai numero</button>
+
+	<div id="giocatori-presenti" class="card">
+		<div class="card-body">
+			<h5 class="card-title">
+				Giocatori presenti:
+			</h5>
+			<p class="card-text lista-giocatori-presenti">
+                <#if data?? && data.stanza?? && data.stanza.giocatorePresenteList?? && data.stanza.giocatorePresenteList?has_content>
+                    <#list data.stanza.giocatorePresenteList as giocatorePresente>
+                        <#if giocatorePresente??>
+							<span class="giocatore-presente btn btn-primary">
+								${giocatorePresente}
+							</span>
+                        </#if>
+                    </#list>
+                <#else>
+					<span id="nessun-giocatore-presente">Nessun giocatore presente</span>
+                </#if>
+			</p>
+		</div>
+	</div>
 </div>
 </body>
 </html>

@@ -1,6 +1,5 @@
 package it.movioletto.repository;
 
-import it.movioletto.model.NumeroUscitoEntity;
 import it.movioletto.model.TabellaEntity;
 import it.movioletto.model.TabellaEntityKey;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +19,6 @@ public interface TabellaRepository extends CrudRepository<TabellaEntity, Tabella
 					" WHERE tabellaEntity.id.idStanza = :idStanza " +
 					"   and tabellaEntity.sequenza = :sequenza ")
 	Optional<TabellaEntity> findSequenzaStanza(@Param("sequenza") String sequenza, @Param("idStanza") String idStanza);
+
+	Optional<List<TabellaEntity>> findAllByIdIdStanza(String idStanza);
 }

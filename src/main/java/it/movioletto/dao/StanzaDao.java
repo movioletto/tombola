@@ -1,11 +1,13 @@
 package it.movioletto.dao;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class StanzaDao implements Serializable {
 
 	private String idStanza;
 	private String nome;
+	private List<String> giocatorePresenteList;
 
 	public StanzaDao() {
 		super();
@@ -30,5 +32,13 @@ public class StanzaDao implements Serializable {
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+
+	public List<String> getGiocatorePresenteList() {
+		return giocatorePresenteList;
+	}
+
+	public void setGiocatorePresenteList(List<String> giocatorePresenteList) {
+		this.giocatorePresenteList = giocatorePresenteList;
 	}
 }

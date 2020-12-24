@@ -96,9 +96,11 @@ table td {
 
 .estrai-numero {
     font-size: 30px;
-    margin: auto;
+    margin-right: auto;
+    margin-left: auto;
     display: block;
     width: 50%;
+    margin-bottom: 20px;
 }
 
 input.apple-switch {
@@ -133,4 +135,8 @@ input.apple-switch:checked {
 input.apple-switch:checked:after {
     left: 20px;
     box-shadow: -2px 4px 3px rgba(0, 0, 0, 0.05);
+}
+
+.giocatore-presente {
+    margin-right: 10px;
 }

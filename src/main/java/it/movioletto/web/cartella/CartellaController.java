@@ -1,23 +1,24 @@
 package it.movioletto.web.cartella;
 
+import it.movioletto.dao.MessaggioDao;
 import it.movioletto.dao.NumeroUscitoDao;
 import it.movioletto.dao.StanzaDao;
 import it.movioletto.dao.TabellaDao;
 import it.movioletto.service.CartellaService;
 import it.movioletto.service.TabelloneService;
 import it.movioletto.web.cartella.data.CartellaData;
-import it.movioletto.web.tabellone.data.TabelloneData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/cartella")
@@ -76,5 +77,11 @@ public class CartellaController {
 		model.addAttribute("data", data);
 
 		return "cartella/cartella";
+	}
+
+	@MessageMapping("/giocatore/{idStanza}")
+	@SendTo("/partita/giocatore/{idStanza}")
+	public MessaggioDao saluto(MessaggioDao messaggioDao) {
+		return messaggioDao;
 	}
 }

@@ -18,24 +18,26 @@
 		function aggiornaNumeriUsciti(data) {
 			let objNumeriUsciti = $('#numeri-usciti');
 
-			if (objNumeriUsciti.find('.separatore')) {
+			let nessunNumeroUscito = objNumeriUsciti.find('#nessun-numero-uscito');
+			if (nessunNumeroUscito.length !== 0) {
+				objNumeriUsciti.find('#nessun-numero-uscito').remove();
+			}
+
+			if (objNumeriUsciti.find('.separatore').length !== 0) {
 				objNumeriUsciti.find('.separatore').remove();
 			}
 
-			$('.lista-numeri-usciti').prepend('<span class="numero-uscito">' + data.numeroUscito + '</span><span class="separatore"></span>');
+			$('.lista-numeri-usciti').prepend('<span class="numero-uscito">' + data.numeroUscito + '</span>' + (nessunNumeroUscito.length !== 0 ? '' : '<span class="separatore"></span>'));
 
 			if (autoSelezione.is(":checked")) {
 				$('#numero-' + data.numeroUscito).addClass('numero-uscito-tabella');
-			}
-
-			if (objNumeriUsciti.hasClass('d-none')) {
-				objNumeriUsciti.removeClass('d-none');
 			}
 		}
 
 		let socket = new SockJS('/tombola/stanza');
 		let stompClient = Stomp.over(socket);
 		stompClient.connect({}, function (frame) {
+			stompClient.send("/partita/giocatore/${data.stanza.idStanza}", {}, JSON.stringify({'idTabella': "${data.tabella.idTabella}"}));
 			stompClient.subscribe('/partita/stanza/${data.stanza.idStanza}', function (data) {
 				aggiornaNumeriUsciti(JSON.parse(data.body));
 			});
@@ -98,8 +100,7 @@
 		</div>
     </#if>
 
-	<div id="numeri-usciti"
-	     class="card ${ (data?? && data.numeroUscitoList?? && data.numeroUscitoList?has_content)?string('', 'd-none') }">
+	<div id="numeri-usciti" class="card">
 		<div class="card-body">
 			<h5 class="card-title">
 				Numero usciti:
@@ -116,13 +117,15 @@
                             </#if>
                         </#if>
                     </#list>
+                <#else>
+					<span id="nessun-numero-uscito">Nessun numero estratto</span>
                 </#if>
 			</p>
 		</div>
 	</div>
 
     <#if data?? && data.tabella?? && data.tabella.sequenza?? && data.tabella.sequenza?has_content>
-		<div class="row" style="width: 50%; margin: auto;">
+		<div class="row">
 			<div class="col-sm">
 				<table>
 					<tbody>

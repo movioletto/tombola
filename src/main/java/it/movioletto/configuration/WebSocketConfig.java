@@ -20,5 +20,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		registry.addEndpoint("/stanza");
 		registry.addEndpoint("/stanza").withSockJS();
+		registry.addEndpoint("/giocatore");
+		registry.addEndpoint("/giocatore").withSockJS();
 	}
 }
