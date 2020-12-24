@@ -46,7 +46,7 @@
 				objGiocatoriPresenti.find('#nessun-giocatore-presente').remove();
 			}
 
-			$('.lista-giocatori-presenti').prepend('<span class="giocatore-presente btn btn-primary">' + data.idTabella + '</span>');
+			$('.lista-giocatori-presenti').prepend('<span class="giocatore-presente btn btn-primary">' + camelCaseInTestoNormale(data.idTabella) + '</span>');
 		}
 
 		let socket = new SockJS('/tombola/giocatore');
@@ -189,7 +189,7 @@
                     <#list data.stanza.giocatorePresenteList as giocatorePresente>
                         <#if giocatorePresente??>
 							<span class="giocatore-presente btn btn-primary">
-								${giocatorePresente}
+								${utility.camelCaseInStringaNormale(giocatorePresente)}
 							</span>
                         </#if>
                     </#list>

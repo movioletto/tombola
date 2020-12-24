@@ -10,3 +10,7 @@ $(function () {
 	let linkStanza = $('#link-stanza');
 	linkStanza.html(window.location.protocol + "//" + window.location.hostname + linkStanza.attr('href'));
 });
+
+var camelCaseInTestoNormale = function (string) {
+	return string.replace(/([A-Z])/g, ' $1');
+}

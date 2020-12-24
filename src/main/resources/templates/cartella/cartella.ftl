@@ -81,7 +81,7 @@
 						</h5>
 						<p class="card-testo">
                             <#if data.tabella.idTabella??>
-                                ${data.tabella.idTabella}
+                                ${utility.camelCaseInStringaNormale(data.tabella.idTabella)}
                             </#if>
 						</p>
 					</div>
