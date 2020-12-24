@@ -5,14 +5,13 @@ import it.movioletto.dao.StanzaDao;
 import it.movioletto.model.NumeroUscitoEntity;
 import it.movioletto.model.NumeroUscitoEntityKey;
 import it.movioletto.model.StanzaEntity;
-import it.movioletto.model.TabellaEntity;
 import it.movioletto.repository.NumeroUscitoRepository;
 import it.movioletto.repository.StanzaRepository;
-import it.movioletto.repository.TabellaRepository;
 import it.movioletto.service.TabelloneService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -24,9 +23,6 @@ public class TabelloneServiceImpl implements TabelloneService {
 
 	@Autowired
 	private NumeroUscitoRepository numeroUscitoRepository;
-
-	@Autowired
-	private TabellaRepository tabellaRepository;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -64,10 +60,13 @@ public class TabelloneServiceImpl implements TabelloneService {
 	public List<NumeroUscitoDao> getNumeriUsciti(String idStanza) {
 		List<NumeroUscitoDao> out = new ArrayList<>();
 
-		Optional<List<NumeroUscitoEntity>> numeroUscitoEntityListOptional = numeroUscitoRepository.findByIdStanza(idStanza);
+		Optional<StanzaEntity> stanzaEntityOptional = stanzaRepository.findById(idStanza);
 
-		numeroUscitoEntityListOptional.ifPresent(numeroUscitoEntities ->
-				numeroUscitoEntities.forEach(numeroUscitoEntity -> out.add(new NumeroUscitoDao(numeroUscitoEntity.getId().getIdStanza(), numeroUscitoEntity.getId().getNumero(), numeroUscitoEntity.getData()))));
+		stanzaEntityOptional.ifPresent(stanzaEntity -> {
+			if (!CollectionUtils.isEmpty(stanzaEntity.getNumeroUscitoList())) {
+				stanzaEntity.getNumeroUscitoList().forEach(numeroUscitoEntity -> out.add(new NumeroUscitoDao(stanzaEntity.getIdStanza(), numeroUscitoEntity.getId().getNumero(), numeroUscitoEntity.getData())));
+			}
+		});
 
 		return out;
 	}
@@ -75,7 +74,7 @@ public class TabelloneServiceImpl implements TabelloneService {
 	@Override
 	public void saveNumeroEstratto(String idStanza, int numeroEstratto) {
 		NumeroUscitoEntityKey entityKey = new NumeroUscitoEntityKey();
-		entityKey.setIdStanza(idStanza);
+		entityKey.setStanza(new StanzaEntity(idStanza));
 		entityKey.setNumero(numeroEstratto);
 
 		NumeroUscitoEntity entity = new NumeroUscitoEntity();
@@ -96,10 +95,39 @@ public class TabelloneServiceImpl implements TabelloneService {
 	public List<String> getGiocatoriPresenti(String idStanza) {
 		List<String> out = new ArrayList<>();
 
-		Optional<List<TabellaEntity>> entityListOptional = tabellaRepository.findAllByIdIdStanza(idStanza);
+		Optional<StanzaEntity> stanzaEntityOptional = stanzaRepository.findById(idStanza);
 
-		entityListOptional.ifPresent(entityList -> {
-			entityList.forEach(entity -> out.add(entity.getId().getIdTabella()));
+		stanzaEntityOptional.ifPresent(stanzaEntity -> {
+			if (!CollectionUtils.isEmpty(stanzaEntity.getTabellaList())) {
+				stanzaEntity.getTabellaList().forEach(tabellaEntity -> out.add(tabellaEntity.getId().getIdTabella()));
+			}
+		});
+
+		return out;
+	}
+
+	@Override
+	public List<StanzaDao> getAllStanza() {
+		List<StanzaDao> out = new ArrayList<>();
+
+		Iterable<StanzaEntity> stanzaEntityIterable = stanzaRepository.findAll();
+
+		stanzaEntityIterable.forEach(stanzaEntity -> {
+			StanzaDao temp = modelMapper.map(stanzaEntity, StanzaDao.class);
+			List<String> giocatoriPresenti = new ArrayList<>();
+			List<NumeroUscitoDao> numeroUscitoList = new ArrayList<>();
+
+			if (!CollectionUtils.isEmpty(stanzaEntity.getTabellaList())) {
+				stanzaEntity.getTabellaList().forEach(tabellaEntity -> giocatoriPresenti.add(tabellaEntity.getId().getIdTabella()));
+				temp.setGiocatorePresenteList(giocatoriPresenti);
+			}
+
+			if (!CollectionUtils.isEmpty(stanzaEntity.getNumeroUscitoList())) {
+				stanzaEntity.getNumeroUscitoList().forEach(numeroUscitoEntity -> numeroUscitoList.add(new NumeroUscitoDao(stanzaEntity.getIdStanza(), numeroUscitoEntity.getId().getNumero(), numeroUscitoEntity.getData())));
+				temp.setNumeroUscitoList(numeroUscitoList);
+			}
+
+			out.add(temp);
 		});
 
 		return out;

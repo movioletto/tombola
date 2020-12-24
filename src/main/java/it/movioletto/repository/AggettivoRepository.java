@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AggettivoRepository extends CrudRepository<AggettivoEntity, Integer> {
-
 }

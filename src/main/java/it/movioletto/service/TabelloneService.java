@@ -18,4 +18,6 @@ public interface TabelloneService {
 	boolean existStanza(String idStanza);
 
 	List<String> getGiocatoriPresenti(String idStanza);
+
+	List<StanzaDao> getAllStanza();
 }

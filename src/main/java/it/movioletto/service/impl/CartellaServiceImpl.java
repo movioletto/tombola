@@ -1,10 +1,7 @@
 package it.movioletto.service.impl;
 
 import it.movioletto.dao.TabellaDao;
-import it.movioletto.model.AggettivoEntity;
-import it.movioletto.model.AnimaleEntity;
-import it.movioletto.model.TabellaEntity;
-import it.movioletto.model.TabellaEntityKey;
+import it.movioletto.model.*;
 import it.movioletto.repository.AggettivoRepository;
 import it.movioletto.repository.AnimaleRepository;
 import it.movioletto.repository.TabellaRepository;
@@ -35,7 +32,7 @@ public class CartellaServiceImpl implements CartellaService {
 
 		TabellaEntityKey entityKey = new TabellaEntityKey();
 		entityKey.setIdTabella(idTabella);
-		entityKey.setIdStanza(idStanza);
+		entityKey.setStanza(new StanzaEntity(idStanza));
 
 		TabellaEntity entity = new TabellaEntity();
 		entity.setId(entityKey);
@@ -186,7 +183,7 @@ public class CartellaServiceImpl implements CartellaService {
 	public boolean existTabella(String idTabella, String idStanza) {
 		TabellaEntityKey entityKey = new TabellaEntityKey();
 		entityKey.setIdTabella(idTabella);
-		entityKey.setIdStanza(idStanza);
+		entityKey.setStanza(new StanzaEntity(idStanza));
 
 		Optional<TabellaEntity> entityOptional = tabellaRepository.findById(entityKey);
 
@@ -206,7 +203,7 @@ public class CartellaServiceImpl implements CartellaService {
 
 		TabellaEntityKey entityKey = new TabellaEntityKey();
 		entityKey.setIdTabella(idTabella);
-		entityKey.setIdStanza(idStanza);
+		entityKey.setStanza(new StanzaEntity(idStanza));
 
 		Optional<TabellaEntity> entity = tabellaRepository.findById(entityKey);
 

@@ -1,26 +1,24 @@
 package it.movioletto.model;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Embeddable
 public class NumeroUscitoEntityKey implements Serializable {
 
-	@Column(name = "id_stanza")
-	private String idStanza;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_stanza", nullable = false)
+	private StanzaEntity stanza;
 
 	@Column(name = "numero")
 	private Integer numero;
 
-	public String getIdStanza() {
-		return idStanza;
+	public StanzaEntity getStanza() {
+		return stanza;
 	}
 
-	public void setIdStanza(String idStanza) {
-		this.idStanza = idStanza;
+	public void setStanza(StanzaEntity stanza) {
+		this.stanza = stanza;
 	}
 
 	public Integer getNumero() {

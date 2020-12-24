@@ -9,8 +9,9 @@ public class TabellaEntityKey implements Serializable {
 	@Column(name = "id_tabella")
 	private String idTabella;
 
-	@Column(name = "id_stanza")
-	private String idStanza;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_stanza", nullable = false)
+	private StanzaEntity stanza;
 
 	public String getIdTabella() {
 		return idTabella;
@@ -20,12 +21,11 @@ public class TabellaEntityKey implements Serializable {
 		this.idTabella = idTabella;
 	}
 
-	public String getIdStanza() {
-		return idStanza;
+	public StanzaEntity getStanza() {
+		return stanza;
 	}
 
-	public void setIdStanza(String idStanza) {
-		this.idStanza = idStanza;
+	public void setStanza(StanzaEntity stanza) {
+		this.stanza = stanza;
 	}
-
 }
