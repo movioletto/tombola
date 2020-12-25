@@ -3,69 +3,11 @@
 <#include "../layout/header.ftl" />
 <script type="text/javascript">
 	$(function () {
-		let bindClickGiocatorePresente = function () {
-
-			$('.giocatore-presente').unbind('click').bind('click', function () {
-				let idTabella = $(this).data('giocatore');
-				let nomeTabella = $(this).html();
-
-				$.ajax({
-					dataType: "json",
-					url: urlGiocatore + idTabella,
-					success: function (data) {
-						let cartellaGiocatorePresente = $("#cartella-giocatore-presente");
-
-						cartellaGiocatorePresente.find('.card-title').html(
-							'<div class="row">' +
-							'   <div class="col-sm">' +
-							'       Cartella giocatore presente: ' + nomeTabella +
-							'   </div>' +
-							'   <div class="col-sm text-right">' +
-							'       <span id="chiudi-cartella-giocatore-presente" class="btn btn-danger" style="float: right;">' +
-							'           Chiudi cartella giocatore' +
-							'       </span>' +
-							'   </div>' +
-							'</div>');
-
-						$('#chiudi-cartella-giocatore-presente').click(function () {
-							cartellaGiocatorePresente.addClass('d-none');
-						});
-
-						let tabella = '<table>' +
-							'   <tbody>';
-
-						data.sequenza.forEach(function (riga) {
-							tabella += '        <tr>';
-
-							riga.forEach(function (numero) {
-								tabella += '           <td style="width: 11.11%;" class="d-table-cell ' + (numero.uscito ? 'numero-uscito-tabella' : '') + '">';
-								if (numero.numero !== 0) {
-									tabella += '               ' + numero.numero;
-								}
-								tabella += '           </td>';
-							});
-
-							tabella += '        </tr>';
-						});
-
-						tabella += ' </tbody>' +
-							'</table>';
-
-						cartellaGiocatorePresente.find('.card-text').html(tabella);
-
-						if (cartellaGiocatorePresente.hasClass('d-none')) {
-							cartellaGiocatorePresente.removeClass('d-none');
-						}
-
-					}
-				});
-			});
-		}
-
-		bindClickGiocatorePresente();
 
 		let url = '<@spring.url '/tabellone/stanza/${data.stanza.idStanza}/numero' />';
-		let urlGiocatore = '<@spring.url '/tabellone/stanza/${data.stanza.idStanza}/tabella/' />';
+		let urlGiocatore = '<@spring.url '/tabellone/stanza/' />';
+
+		bindClickGiocatorePresente(urlGiocatore);
 
 		$("#estrai-numero").click(function () {
 			$(this).attr('disabled', 'true');
@@ -108,11 +50,10 @@
 			}
 
 			if (objGiocatoriPresenti.find('#giocatore-' + data.idTabella).length === 0) {
-				$('.lista-giocatori-presenti').prepend('<span id="giocatore-' + data.idTabella + '" class="giocatore-presente btn btn-primary" data-giocatore="' + data.idTabella + '">' + camelCaseInTestoNormale(data.idTabella) + '</span>');
+				$('.lista-giocatori-presenti').prepend('<span id="giocatore-' + data.idTabella + '" class="giocatore-presente btn btn-primary" data-giocatore="' + data.idTabella + '" data-stanza="${data.stanza.idStanza}">' + camelCaseInTestoNormale(data.idTabella) + '</span>');
 			}
 
-			bindClickGiocatorePresente();
-
+			bindClickGiocatorePresente(urlGiocatore);
 		}
 
 		let socket = new SockJS('/tombola/giocatore');
@@ -255,7 +196,7 @@
                     <#list data.stanza.giocatorePresenteList as giocatorePresente>
                         <#if giocatorePresente??>
 							<span id="giocatore-${giocatorePresente}" class="giocatore-presente btn btn-primary"
-							      data-giocatore="${giocatorePresente}">
+							      data-giocatore="${giocatorePresente}" data-stanza="${data.stanza.idStanza}">
 								${utility.camelCaseInStringaNormale(giocatorePresente)}
 							</span>
                         </#if>

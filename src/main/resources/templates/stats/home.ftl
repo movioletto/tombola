@@ -1,6 +1,11 @@
 <#include "../import.ftl" />
 <html lang="IT">
 <#include "../layout/header.ftl" />
+<script>
+	$(function () {
+		bindClickGiocatorePresente('<@spring.url '/tabellone/stanza/' />');
+	});
+</script>
 <body>
 <h1 class="titolo">Tombola</h1>
 <div class="container">
@@ -33,7 +38,8 @@
                         <#if stanza.giocatorePresenteList?? && stanza.giocatorePresenteList?has_content>
                             <#list stanza.giocatorePresenteList as giocatorePresente>
                                 <#if giocatorePresente??>
-									<span class="giocatore-presente btn btn-primary">
+									<span id="giocatore-${giocatorePresente}" class="giocatore-presente btn btn-primary"
+									      data-giocatore="${giocatorePresente}" data-stanza="${stanza.idStanza}">
 										${utility.camelCaseInStringaNormale(giocatorePresente)}
 									</span>
                                 </#if>
@@ -42,6 +48,10 @@
 							Nessun giocatore presente
                         </#if>
 					</p>
+				</div>
+				<div id="cartella-giocatore-presente" class="card-body d-none">
+					<h5 class="card-title"></h5>
+					<p class="card-text"></p>
 				</div>
 				<div class="card-body">
 					<h5 class="card-title">
