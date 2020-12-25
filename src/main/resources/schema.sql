@@ -2,16 +2,15 @@ DROP TABLE animale if exists;
 CREATE TABLE animale(
     id_animale serial,
     nome varchar(20),
-    --genere varchar(1),
+    genere varchar(1),
     PRIMARY KEY (id_animale)
 );
 
 DROP TABLE aggettivo if exists;
 CREATE TABLE aggettivo(
     id_aggettivo serial,
-    nome varchar(20),
-    --maschile varchar(20),
-    --femminile varchar(20),
+    maschile varchar(20),
+    femminile varchar(20),
     PRIMARY KEY (id_aggettivo)
 );
 

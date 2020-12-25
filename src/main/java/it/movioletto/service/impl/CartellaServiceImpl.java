@@ -95,8 +95,8 @@ public class CartellaServiceImpl implements CartellaService {
 			numeriCartella.forEach((chiave, valore) -> {
 				if (valore.size() == 1) {
 					Integer rigaPosizione = 1;
-					for(int i = 1;i < 4;i++) {
-						if(totaleRigaMap.get(i) < totaleRigaMap.get(rigaPosizione)) {
+					for (int i = 1; i < 4; i++) {
+						if (totaleRigaMap.get(i) < totaleRigaMap.get(rigaPosizione)) {
 							rigaPosizione = i;
 						}
 					}
@@ -119,7 +119,7 @@ public class CartellaServiceImpl implements CartellaService {
 							.filter(entry -> ordineValore.get(1).equals(entry.getValue()) && finalRiga != entry.getKey())
 							.map(Map.Entry::getKey).findFirst().get();
 
-					if(riga1 > riga2) {
+					if (riga1 > riga2) {
 						int temp = riga2;
 						riga2 = riga1;
 						riga1 = temp;
@@ -164,13 +164,16 @@ public class CartellaServiceImpl implements CartellaService {
 		do {
 			Optional<AnimaleEntity> animale = animaleRepository.findById(randomAnimale.nextInt(numeroAnimali) + 1);
 			String nomeAnimale = null;
-			if(animale.isPresent()) {
+			if (animale.isPresent()) {
 				nomeAnimale = animale.get().getNome();
 			}
 			Optional<AggettivoEntity> aggettivo = aggettivoRepository.findById(randomAggettivo.nextInt(numeroAggettivi) + 1);
 			String nomeAggettivo = null;
-			if(animale.isPresent()) {
-				nomeAggettivo = aggettivo.get().getNome();
+			if (aggettivo.isPresent()) {
+				nomeAggettivo = aggettivo.get().getMaschile();
+				if (animale.isPresent() && "f".equals(animale.get().getGenere())) {
+					nomeAggettivo = aggettivo.get().getFemminile();
+				}
 			}
 
 			idTabella = StringUtils.capitalize(nomeAnimale) + StringUtils.capitalize(nomeAggettivo);

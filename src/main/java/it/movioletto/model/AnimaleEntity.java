@@ -1,6 +1,9 @@
 package it.movioletto.model;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 @Table(name = "animale")
@@ -14,11 +17,14 @@ public class AnimaleEntity implements Serializable {
 	@Column(name = "nome")
 	private String nome;
 
-	public int getIdAnimale() {
+	@Column(name = "genere")
+	private String genere;
+
+	public Integer getIdAnimale() {
 		return idAnimale;
 	}
 
-	public void setIdAnimale(int idAnimale) {
+	public void setIdAnimale(Integer idAnimale) {
 		this.idAnimale = idAnimale;
 	}
 
@@ -28,5 +34,13 @@ public class AnimaleEntity implements Serializable {
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+
+	public String getGenere() {
+		return genere;
+	}
+
+	public void setGenere(String genere) {
+		this.genere = genere;
 	}
 }
