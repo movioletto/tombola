@@ -1,14 +1,11 @@
 package it.movioletto.web.cartella;
 
-import it.movioletto.dao.MessaggioDao;
-import it.movioletto.dao.NumeroUscitoDao;
-import it.movioletto.dao.StanzaDao;
-import it.movioletto.dao.TabellaDao;
+import it.movioletto.constant.PremioEnum;
+import it.movioletto.dao.*;
 import it.movioletto.service.CartellaService;
 import it.movioletto.service.TabelloneService;
 import it.movioletto.web.cartella.data.CartellaData;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -19,10 +16,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @Controller
 @RequestMapping("/cartella")
 public class CartellaController {
+
+	private final Logger logger = Logger.getLogger(CartellaController.class.getName());
 
 	@Autowired
 	private CartellaService cartellaService;
@@ -74,6 +74,11 @@ public class CartellaController {
 		tabella.setNumeriUsciti(numeriUsciti);
 		data.setTabella(tabella);
 
+		List<VincitaDao> vincitaList = tabelloneService.getVincite(idStanza);
+		data.setVincitaList(vincitaList);
+		PremioEnum premioCorrente = tabelloneService.getPremioCorrente(idStanza);
+		data.setPremioCorrente(premioCorrente);
+
 		model.addAttribute("data", data);
 
 		return "cartella/cartella";
@@ -81,7 +86,15 @@ public class CartellaController {
 
 	@MessageMapping("/giocatore/{idStanza}")
 	@SendTo("/partita/giocatore/{idStanza}")
-	public MessaggioDao saluto(MessaggioDao messaggioDao) {
+	public MessaggioDao messaggi(MessaggioDao messaggioDao) {
+
+		logger.info("messaggioDao:" + messaggioDao.toString());
+		if (messaggioDao.getAzione() != null && messaggioDao.getAzione() == 3) {
+			if (messaggioDao.getIdPremio() != null) {
+				messaggioDao.setNomePremio(PremioEnum.getValoreByCodice(messaggioDao.getIdPremio()));
+			}
+		}
+
 		return messaggioDao;
 	}
 }

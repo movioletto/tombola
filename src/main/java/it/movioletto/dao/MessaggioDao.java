@@ -1,25 +1,26 @@
 package it.movioletto.dao;
 
 public class MessaggioDao {
-	//	Cartella
-	private int numeroUscito;
 
-	//	Tabellone
+	private Integer azione;
+	private Integer numeroUscito;
 	private String idTabella;
+	private Integer idPremio;
+	private String nomePremio;
 
-	public MessaggioDao(int numeroUscito) {
-		this.numeroUscito = numeroUscito;
+	public Integer getAzione() {
+		return azione;
 	}
 
-	public MessaggioDao(String idTabella) {
-		this.idTabella = idTabella;
+	public void setAzione(Integer azione) {
+		this.azione = azione;
 	}
 
-	public int getNumeroUscito() {
+	public Integer getNumeroUscito() {
 		return numeroUscito;
 	}
 
-	public void setNumeroUscito(int numeroUscito) {
+	public void setNumeroUscito(Integer numeroUscito) {
 		this.numeroUscito = numeroUscito;
 	}
 
@@ -30,4 +31,21 @@ public class MessaggioDao {
 	public void setIdTabella(String idTabella) {
 		this.idTabella = idTabella;
 	}
+
+	public Integer getIdPremio() {
+		return idPremio;
+	}
+
+	public void setIdPremio(Integer idPremio) {
+		this.idPremio = idPremio;
+	}
+
+	public String getNomePremio() {
+		return nomePremio;
+	}
+
+	public void setNomePremio(String nomePremio) {
+		this.nomePremio = nomePremio;
+	}
+
 }

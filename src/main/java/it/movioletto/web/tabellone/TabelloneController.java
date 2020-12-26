@@ -1,30 +1,24 @@
 package it.movioletto.web.tabellone;
 
-import it.movioletto.dao.MessaggioDao;
-import it.movioletto.dao.NumeroUscitoDao;
-import it.movioletto.dao.StanzaDao;
-import it.movioletto.dao.TabellaDao;
+import it.movioletto.constant.PremioEnum;
+import it.movioletto.dao.*;
 import it.movioletto.service.TabelloneService;
 import it.movioletto.web.tabellone.data.TabelloneData;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/tabellone")
@@ -75,10 +69,10 @@ public class TabelloneController {
 		tabellaList.forEach(tabella -> tabella.setNumeriUsciti(numeriUsciti));
 		data.setTabellaList(tabellaList);
 
-		Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
-		if (inputFlashMap != null && CollectionUtils.contains(inputFlashMap.keySet().iterator(), "numeroEstratto")) {
-			data.setNumeroEstratto((Integer) inputFlashMap.get("numeroEstratto"));
-		}
+		List<VincitaDao> vincitaList = tabelloneService.getVincite(idStanza);
+		data.setVincitaList(vincitaList);
+		PremioEnum premioCorrente = tabelloneService.getPremioCorrente(idStanza);
+		data.setPremioCorrente(premioCorrente);
 
 		model.addAttribute("data", data);
 

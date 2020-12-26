@@ -1,8 +1,10 @@
 package it.movioletto.web.tabellone.data;
 
+import it.movioletto.constant.PremioEnum;
 import it.movioletto.dao.NumeroUscitoDao;
 import it.movioletto.dao.StanzaDao;
 import it.movioletto.dao.TabellaDao;
+import it.movioletto.dao.VincitaDao;
 
 import java.util.List;
 
@@ -11,7 +13,8 @@ public class TabelloneData {
 	private StanzaDao stanza;
 	private List<TabellaDao> tabellaList;
 	private List<NumeroUscitoDao> numeroUscitoList;
-	private Integer numeroEstratto;
+	private List<VincitaDao> vincitaList;
+	private PremioEnum premioCorrente;
 
 	public StanzaDao getStanza() {
 		return stanza;
@@ -37,11 +40,19 @@ public class TabelloneData {
 		this.numeroUscitoList = numeroUscitoList;
 	}
 
-	public Integer getNumeroEstratto() {
-		return numeroEstratto;
+	public List<VincitaDao> getVincitaList() {
+		return vincitaList;
 	}
 
-	public void setNumeroEstratto(Integer numeroEstratto) {
-		this.numeroEstratto = numeroEstratto;
+	public void setVincitaList(List<VincitaDao> vincitaList) {
+		this.vincitaList = vincitaList;
+	}
+
+	public PremioEnum getPremioCorrente() {
+		return premioCorrente;
+	}
+
+	public void setPremioCorrente(PremioEnum premioCorrente) {
+		this.premioCorrente = premioCorrente;
 	}
 }

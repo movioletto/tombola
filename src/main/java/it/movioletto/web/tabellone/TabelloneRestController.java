@@ -1,5 +1,7 @@
 package it.movioletto.web.tabellone;
 
+import it.movioletto.constant.AzioneEnum;
+import it.movioletto.constant.PremioEnum;
 import it.movioletto.dao.MessaggioDao;
 import it.movioletto.dao.NumeroUscitoDao;
 import it.movioletto.dao.TabellaDao;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Random;
@@ -33,7 +34,7 @@ public class TabelloneRestController {
 	}
 
 	@GetMapping("/stanza/{idStanza}/numero")
-	public MessaggioDao getNumeroTabellone(@PathVariable("idStanza") String idStanza, RedirectAttributes redirectAttributes) {
+	public MessaggioDao getNumeroTabellone(@PathVariable("idStanza") String idStanza) {
 
 		if (!tabelloneService.existStanza(idStanza)) {
 			return null;
@@ -49,9 +50,13 @@ public class TabelloneRestController {
 
 		tabelloneService.saveNumeroEstratto(idStanza, numeroEstratto);
 
-		simpMessagingTemplate.convertAndSend("/partita/stanza/" + idStanza, new MessaggioDao(numeroEstratto));
+		MessaggioDao messaggioDao = new MessaggioDao();
+		messaggioDao.setAzione(AzioneEnum.NUMERO_USCITO.getCodice());
+		messaggioDao.setNumeroUscito(numeroEstratto);
 
-		return new MessaggioDao(numeroEstratto);
+		simpMessagingTemplate.convertAndSend("/partita/stanza/" + idStanza, messaggioDao);
+
+		return messaggioDao;
 	}
 
 	@GetMapping("/stanza/{idStanza}/tabella/{idTabella}")
@@ -67,6 +72,43 @@ public class TabelloneRestController {
 		tabella.setNumeriUsciti(numeriUsciti);
 
 		return tabella;
+	}
+
+	@GetMapping("/stanza/{idStanza}/premioCorrente")
+	public MessaggioDao getPremioCorrente(@PathVariable("idStanza") String idStanza) {
+
+		if (!tabelloneService.existStanza(idStanza)) {
+			return null;
+		}
+
+		PremioEnum premioCorrente = tabelloneService.getPremioCorrente(idStanza);
+
+		if (premioCorrente == null) {
+			return null;
+		}
+
+		MessaggioDao messaggioDao = new MessaggioDao();
+		messaggioDao.setIdPremio(premioCorrente.getCodice());
+		messaggioDao.setNomePremio(premioCorrente.getValore());
+		return messaggioDao;
+	}
+
+	@GetMapping("/stanza/{idStanza}/premio/{idTabella}/{idPremio}")
+	public MessaggioDao savePremio(@PathVariable("idStanza") String idStanza, @PathVariable("idTabella") String idTabella, @PathVariable("idPremio") Integer idPremio) {
+
+		if (!tabelloneService.existStanza(idStanza) || !cartellaService.existTabella(idTabella, idStanza) || tabelloneService.existPremio(idStanza, idTabella, idPremio)) {
+			return null;
+		}
+
+		tabelloneService.savePremio(idStanza, idTabella, idPremio);
+
+		MessaggioDao messaggioDao = new MessaggioDao();
+		messaggioDao.setAzione(4);
+		messaggioDao.setIdTabella(idTabella);
+		messaggioDao.setNomePremio(PremioEnum.getValoreByCodice(idPremio));
+		messaggioDao.setIdPremio(idPremio);
+
+		return messaggioDao;
 	}
 
 }

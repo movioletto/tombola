@@ -1,12 +1,11 @@
 <#include "../import.ftl" />
 <html lang="IT">
 <#include "../layout/header.ftl" />
-<script>
-	$(function () {
-		bindClickGiocatorePresente('<@spring.url '/tabellone/stanza/' />');
-	});
-</script>
+<script type="text/javascript" src="<@spring.url '/resources/static/js/stats/script.js' />"></script>
 <body>
+
+<input type="hidden" id="url-giocatore-presente" value="<@spring.url '/tabellone/stanza/' />"/>
+
 <h1 class="titolo">Tombola</h1>
 <div class="container">
 
@@ -50,7 +49,19 @@
 					</p>
 				</div>
 				<div id="cartella-giocatore-presente" class="card-body d-none">
-					<h5 class="card-title"></h5>
+					<h5 class="card-title">
+						<div class="row">
+							<div class="col-sm">
+								Cartella giocatore presente: <span class="id-cartella-giocatore-presente"></span>
+							</div>
+							<div class="col-sm text-right">
+								<span id="chiudi-cartella-giocatore-presente" class="btn btn-danger"
+								      style="float: right;">
+									Chiudi cartella giocatore
+					            </span>
+							</div>
+						</div>
+					</h5>
 					<p class="card-text"></p>
 				</div>
 				<div class="card-body">

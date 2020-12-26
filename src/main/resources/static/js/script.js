@@ -20,7 +20,6 @@ var bindClickGiocatorePresente = function (url) {
 	$('.giocatore-presente').unbind('click').bind('click', function () {
 		let idTabella = $(this).data('giocatore');
 		let idStanza = $(this).data('stanza');
-		let nomeTabella = $(this).html();
 
 		$.ajax({
 			dataType: "json",
@@ -28,17 +27,15 @@ var bindClickGiocatorePresente = function (url) {
 			success: function (data) {
 				let cartellaGiocatorePresente = $("#cartella-giocatore-presente");
 
-				cartellaGiocatorePresente.find('.card-title').html(
-					'<div class="row">' +
-					'   <div class="col-sm">' +
-					'       Cartella giocatore presente: ' + nomeTabella +
-					'   </div>' +
-					'   <div class="col-sm text-right">' +
-					'       <span id="chiudi-cartella-giocatore-presente" class="btn btn-danger" style="float: right;">' +
-					'           Chiudi cartella giocatore' +
-					'       </span>' +
-					'   </div>' +
-					'</div>');
+				cartellaGiocatorePresente.find('.card-title').find('.id-cartella-giocatore-presente').html(camelCaseInTestoNormale(idTabella));
+
+				let confermaPremio = $('#conferma-premio');
+				if ($('#giocatore-' + idTabella).find('.badge').length !== 0) {
+					confermaPremio.data('id-tabella', idTabella);
+					confermaPremio.removeClass('d-none');
+				} else {
+					confermaPremio.addClass('d-none');
+				}
 
 				$('#chiudi-cartella-giocatore-presente').click(function () {
 					cartellaGiocatorePresente.addClass('d-none');
@@ -70,6 +67,39 @@ var bindClickGiocatorePresente = function (url) {
 					cartellaGiocatorePresente.removeClass('d-none');
 				}
 
+			}
+		});
+	});
+}
+
+function disegnaNumeriUsciti(data) {
+	let objNumeriUsciti = $('#numeri-usciti');
+
+	let nessunNumeroUscito = objNumeriUsciti.find('#nessun-numero-uscito');
+	if (nessunNumeroUscito.length !== 0) {
+		objNumeriUsciti.find('#nessun-numero-uscito').remove();
+	}
+
+	if (objNumeriUsciti.find('.separatore').length !== 0) {
+		objNumeriUsciti.find('.separatore').remove();
+	}
+
+	$('.lista-numeri-usciti').prepend('<span class="numero-uscito">' + data.numeroUscito + '</span>' + (nessunNumeroUscito.length !== 0 ? '' : '<span class="separatore"></span>'));
+}
+
+var bindClickEstraiNumero = function (url) {
+	$("#estrai-numero").click(function () {
+		$(this).attr('disabled', 'true');
+
+		$.ajax({
+			dataType: "json",
+			url: url,
+			success: function (data) {
+				disegnaNumeriUsciti(data);
+
+				$('#numero-' + data.numeroUscito).addClass('numero-uscito-tabella');
+
+				$('#estrai-numero').removeAttr('disabled');
 			}
 		});
 	});

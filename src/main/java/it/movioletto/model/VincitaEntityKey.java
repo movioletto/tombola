@@ -1,10 +1,19 @@
-package it.movioletto.dao;
+package it.movioletto.model;
 
-public class VincitaDao {
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import java.io.Serializable;
 
+@Embeddable
+public class VincitaEntityKey implements Serializable {
+
+	@Column(name = "id_stanza")
 	private String idStanza;
+
+	@Column(name = "premio")
 	private Integer premio;
-	private String nomePremio;
+
+	@Column(name = "id_tabella")
 	private String idTabella;
 
 	public String getIdStanza() {
@@ -21,14 +30,6 @@ public class VincitaDao {
 
 	public void setPremio(Integer premio) {
 		this.premio = premio;
-	}
-
-	public String getNomePremio() {
-		return nomePremio;
-	}
-
-	public void setNomePremio(String nomePremio) {
-		this.nomePremio = nomePremio;
 	}
 
 	public String getIdTabella() {

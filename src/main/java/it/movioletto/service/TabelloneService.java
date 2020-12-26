@@ -1,7 +1,9 @@
 package it.movioletto.service;
 
+import it.movioletto.constant.PremioEnum;
 import it.movioletto.dao.NumeroUscitoDao;
 import it.movioletto.dao.StanzaDao;
+import it.movioletto.dao.VincitaDao;
 
 import java.util.List;
 
@@ -20,4 +22,12 @@ public interface TabelloneService {
 	List<String> getGiocatoriPresenti(String idStanza);
 
 	List<StanzaDao> getAllStanza();
+
+	List<VincitaDao> getVincite(String idStanza);
+
+	PremioEnum getPremioCorrente(String idStanza);
+
+	boolean existPremio(String idStanza, String idTabella, Integer idPremio);
+
+	void savePremio(String idStanza, String idTabella, Integer idPremio);
 }

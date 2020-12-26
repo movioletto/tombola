@@ -1,12 +1,13 @@
 package it.movioletto.service.impl;
 
+import it.movioletto.constant.PremioEnum;
 import it.movioletto.dao.NumeroUscitoDao;
 import it.movioletto.dao.StanzaDao;
-import it.movioletto.model.NumeroUscitoEntity;
-import it.movioletto.model.NumeroUscitoEntityKey;
-import it.movioletto.model.StanzaEntity;
+import it.movioletto.dao.VincitaDao;
+import it.movioletto.model.*;
 import it.movioletto.repository.NumeroUscitoRepository;
 import it.movioletto.repository.StanzaRepository;
+import it.movioletto.repository.VincitaRepository;
 import it.movioletto.service.TabelloneService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class TabelloneServiceImpl implements TabelloneService {
 
 	@Autowired
 	private NumeroUscitoRepository numeroUscitoRepository;
+
+	@Autowired
+	private VincitaRepository vincitaRepository;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -131,5 +135,62 @@ public class TabelloneServiceImpl implements TabelloneService {
 		});
 
 		return out;
+	}
+
+	@Override
+	public List<VincitaDao> getVincite(String idStanza) {
+		List<VincitaDao> out = new ArrayList<>();
+
+		Optional<List<VincitaEntity>> vincitaEntityListOptional = vincitaRepository.findAllByIdIdStanza(idStanza);
+
+		vincitaEntityListOptional.ifPresent(vincitaEntityList -> {
+			vincitaEntityList.forEach(vincitaEntity -> {
+				VincitaDao temp = modelMapper.map(vincitaEntity, VincitaDao.class);
+				temp.setPremio(vincitaEntity.getId().getPremio());
+				temp.setNomePremio(PremioEnum.getValoreByCodice(temp.getPremio()));
+
+				out.add(temp);
+			});
+		});
+
+		return out;
+	}
+
+	@Override
+	public PremioEnum getPremioCorrente(String idStanza) {
+		Integer premio = vincitaRepository.findMaxPremio(idStanza);
+
+		if (premio == null) {
+			return PremioEnum.AMBO;
+		} else if (premio == 5) {
+			return null;
+		}
+
+		return PremioEnum.getEnumByCodice(premio + 1);
+	}
+
+	@Override
+	public boolean existPremio(String idStanza, String idTabella, Integer idPremio) {
+		VincitaEntityKey entityKey = new VincitaEntityKey();
+		entityKey.setIdStanza(idStanza);
+		entityKey.setIdTabella(idTabella);
+		entityKey.setPremio(idPremio);
+
+		Optional<VincitaEntity> entityOptional = vincitaRepository.findById(entityKey);
+
+		return entityOptional.isPresent();
+	}
+
+	@Override
+	public void savePremio(String idStanza, String idTabella, Integer idPremio) {
+		VincitaEntityKey entityKey = new VincitaEntityKey();
+		entityKey.setIdStanza(idStanza);
+		entityKey.setIdTabella(idTabella);
+		entityKey.setPremio(idPremio);
+
+		VincitaEntity entity = new VincitaEntity();
+		entity.setId(entityKey);
+
+		vincitaRepository.save(entity);
 	}
 }

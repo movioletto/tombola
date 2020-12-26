@@ -1,52 +1,19 @@
 <#include "../import.ftl" />
 <html lang="IT">
 <#include "../layout/header.ftl" />
-<script type="text/javascript">
-	$(function () {
-		let autoSelezione = $('#auto-selezione');
-		autoSelezione.change(function () {
-			if ($(this).is(":checked")) {
-				$('.numero-uscito').each(function () {
-					let casellaNumeroCorrente = $('#numero-' + $(this).html());
-					if (!casellaNumeroCorrente.hasClass('numero-uscito-tabella')) {
-						casellaNumeroCorrente.addClass('numero-uscito-tabella');
-					}
-				});
-			}
-		});
-
-		function aggiornaNumeriUsciti(data) {
-			let objNumeriUsciti = $('#numeri-usciti');
-
-			let nessunNumeroUscito = objNumeriUsciti.find('#nessun-numero-uscito');
-			if (nessunNumeroUscito.length !== 0) {
-				objNumeriUsciti.find('#nessun-numero-uscito').remove();
-			}
-
-			if (objNumeriUsciti.find('.separatore').length !== 0) {
-				objNumeriUsciti.find('.separatore').remove();
-			}
-
-			$('.lista-numeri-usciti').prepend('<span class="numero-uscito">' + data.numeroUscito + '</span>' + (nessunNumeroUscito.length !== 0 ? '' : '<span class="separatore"></span>'));
-
-			if (autoSelezione.is(":checked")) {
-				$('#numero-' + data.numeroUscito).addClass('numero-uscito-tabella');
-			}
-		}
-
-		let socket = new SockJS('/tombola/stanza');
-		let stompClient = Stomp.over(socket);
-		stompClient.connect({}, function (frame) {
-			stompClient.send("/partita/giocatore/${data.stanza.idStanza}", {}, JSON.stringify({'idTabella': "${data.tabella.idTabella}"}));
-			stompClient.subscribe('/partita/stanza/${data.stanza.idStanza}', function (data) {
-				aggiornaNumeriUsciti(JSON.parse(data.body));
-			});
-		});
-
-	});
-</script>
-
+<script type="text/javascript" src="<@spring.url '/resources/static/js/cartella/script.js' />"></script>
 <body>
+
+<#if data?? && data.stanza?? && data.stanza.idStanza??>
+	<input type="hidden" id="url-premio-corrente"
+	       value="<@spring.url '/tabellone/stanza/${data.stanza.idStanza}/premioCorrente/' />">
+
+	<input type="hidden" id="id-stanza" value="${data.stanza.idStanza}">
+</#if>
+<#if data?? && data.tabella?? && data.tabella.idTabella??>
+	<input type="hidden" id="id-tabella" value="${data.tabella.idTabella}">
+</#if>
+
 <h1 class="titolo">Tombola</h1>
 <div class="container">
     <#if data?? && data.stanza??>
@@ -100,6 +67,28 @@
 		</div>
     </#if>
 
+	<div id="premi-vinti" class="card">
+		<div class="card-body">
+			<h5 class="card-title">
+				Premi vinti:
+			</h5>
+			<p class="card-text lista-premi-vinti">
+                <#if data?? && data.vincitaList?? && data.vincitaList?has_content>
+                    <#list data.vincitaList as vincita>
+                        <#if vincita??>
+							<strong class="badge bg-success ms-2">
+                                ${vincita.nomePremio}
+							</strong>
+							- ${utility.camelCaseInStringaNormale(vincita.idTabella)}
+                        </#if>
+                    </#list>
+                <#else>
+					<span id="nessun-premio-vinto">Nessun premio vinto</span>
+                </#if>
+			</p>
+		</div>
+	</div>
+
 	<div id="numeri-usciti" class="card">
 		<div class="card-body">
 			<h5 class="card-title">
@@ -148,6 +137,14 @@
 			</div>
 		</div>
     </#if>
+
+    <#if data?? && data.premioCorrente?? && data.premioCorrente.codice?? && data.premioCorrente.valore??>
+		<button id="dichiarazione-premio" class="btn btn-danger dichiarazione-premio"
+		        data-id-premio="${data.premioCorrente.codice}" data-nome-premio="${data.premioCorrente.valore}">
+			Ho fatto ${data.premioCorrente.valore}!
+		</button>
+    </#if>
+
     <#include "../layout/footer.ftl" />
 </div>
 </body>

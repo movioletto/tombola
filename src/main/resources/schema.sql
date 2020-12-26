@@ -44,6 +44,5 @@ CREATE TABLE vincita(
     id_stanza varchar(50),
     id_tabella varchar(50),
     premio number(1,0),
-    PRIMARY KEY (id_stanza, id_tabella),
-    CONSTRAINT tabella_vincita FOREIGN KEY (id_stanza, id_tabella) REFERENCES tabella (id_stanza, id_tabella)
+    PRIMARY KEY (id_stanza, id_tabella, premio)
 );

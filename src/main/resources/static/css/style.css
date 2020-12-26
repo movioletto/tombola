@@ -94,7 +94,7 @@ table td {
 	display: block;
 }
 
-.estrai-numero {
+.estrai-numero, .dichiarazione-premio {
 	font-size: 30px;
 	margin-right: auto;
 	margin-left: auto;

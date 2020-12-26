@@ -1,72 +1,17 @@
 <#include "../import.ftl" />
 <html lang="IT">
 <#include "../layout/header.ftl" />
-<script type="text/javascript">
-	$(function () {
-
-		let url = '<@spring.url '/tabellone/stanza/${data.stanza.idStanza}/numero' />';
-		let urlGiocatore = '<@spring.url '/tabellone/stanza/' />';
-
-		bindClickGiocatorePresente(urlGiocatore);
-
-		$("#estrai-numero").click(function () {
-			$(this).attr('disabled', 'true');
-
-			$.ajax({
-				dataType: "json",
-				url: url,
-				success: function (data) {
-					let objNumeriUsciti = $('#numeri-usciti');
-
-					let nessunNumeroUscito = objNumeriUsciti.find('#nessun-numero-uscito');
-					if (nessunNumeroUscito.length !== 0) {
-						objNumeriUsciti.find('#nessun-numero-uscito').remove();
-					}
-
-					if (objNumeriUsciti.find('.separatore').length !== 0) {
-						objNumeriUsciti.find('.separatore').remove();
-					}
-
-					$('.lista-numeri-usciti').prepend('<span class="numero-uscito">' + data.numeroUscito + '</span>' + (nessunNumeroUscito.length !== 0 ? '' : '<span class="separatore"></span>'));
-
-					$('#numero-' + data.numeroUscito).addClass('numero-uscito-tabella');
-
-					$('#estrai-numero').removeAttr('disabled');
-				}
-			});
-		});
-
-		function aggiornaGiocatori(data) {
-			let numeroGiocatori = $('#numero-giocatori');
-
-			if (Number.isInteger(parseInt(numeroGiocatori.html()))) {
-				numeroGiocatori.html(parseInt(numeroGiocatori.html()) + 1);
-			}
-
-			let objGiocatoriPresenti = $('#giocatori-presenti');
-
-			if (objGiocatoriPresenti.find('#nessun-giocatore-presente').length !== 0) {
-				objGiocatoriPresenti.find('#nessun-giocatore-presente').remove();
-			}
-
-			if (objGiocatoriPresenti.find('#giocatore-' + data.idTabella).length === 0) {
-				$('.lista-giocatori-presenti').prepend('<span id="giocatore-' + data.idTabella + '" class="giocatore-presente btn btn-primary" data-giocatore="' + data.idTabella + '" data-stanza="${data.stanza.idStanza}">' + camelCaseInTestoNormale(data.idTabella) + '</span>');
-			}
-
-			bindClickGiocatorePresente(urlGiocatore);
-		}
-
-		let socket = new SockJS('/tombola/giocatore');
-		let stompClient = Stomp.over(socket);
-		stompClient.connect({}, function (frame) {
-			stompClient.subscribe('/partita/giocatore/${data.stanza.idStanza}', function (data) {
-				aggiornaGiocatori(JSON.parse(data.body));
-			});
-		});
-
-	});
-</script>
+<script type="text/javascript" src="<@spring.url '/resources/static/js/tabellone/script.js' />"></script>
 <body>
+
+<#if data?? && data.stanza?? && data.stanza.idStanza??>
+	<input type="hidden" id="url-numero" value="<@spring.url '/tabellone/stanza/${data.stanza.idStanza}/numero' />">
+	<input type="hidden" id="url-giocatore" value="<@spring.url '/tabellone/stanza/' />">
+	<input type="hidden" id="url-premio" value="<@spring.url '/tabellone/stanza/${data.stanza.idStanza}/premio/' />">
+
+	<input type="hidden" id="id-stanza" value="${data.stanza.idStanza}">
+</#if>
+
 <h1 class="titolo">Tombola</h1>
 <div class="container">
     <#if data?? && data.stanza??>
@@ -127,6 +72,28 @@
 			</div>
 		</div>
     </#if>
+
+	<div id="premi-vinti" class="card">
+		<div class="card-body">
+			<h5 class="card-title">
+				Premi vinti:
+			</h5>
+			<p class="card-text lista-premi-vinti">
+                <#if data?? && data.vincitaList?? && data.vincitaList?has_content>
+                    <#list data.vincitaList as vincita>
+                        <#if vincita??>
+							<strong class="badge bg-success ms-2">
+                                ${vincita.nomePremio}
+							</strong>
+							- ${utility.camelCaseInStringaNormale(vincita.idTabella)}
+                        </#if>
+                    </#list>
+                <#else>
+					<span id="nessun-premio-vinto">Nessun premio vinto</span>
+                </#if>
+			</p>
+		</div>
+	</div>
 
 	<div id="numeri-usciti" class="card">
 		<div class="card-body">
@@ -207,7 +174,23 @@
 			</p>
 		</div>
 		<div id="cartella-giocatore-presente" class="card-body d-none">
-			<h5 class="card-title"></h5>
+			<h5 class="card-title">
+				<div class="row">
+					<div class="col-sm">
+						Cartella giocatore presente: <span class="id-cartella-giocatore-presente"></span>
+					</div>
+					<div class="col-sm text-right">
+						<span id="chiudi-cartella-giocatore-presente" class="btn btn-danger"
+						      style="float: right;">
+							Chiudi cartella giocatore
+			            </span>
+						<span id="conferma-premio" class="btn btn-primary d-none"
+						      style="float: right; margin-right: 10px;">
+							Conferma <span class="nome-premio-giocatore-presente"></span>!
+			            </span>
+					</div>
+				</div>
+			</h5>
 			<p class="card-text"></p>
 		</div>
 	</div>

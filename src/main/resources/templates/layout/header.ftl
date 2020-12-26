@@ -15,10 +15,6 @@
 	<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
-	<style>
-		<#include '../assets/style.css' />
-	</style>
-	<script>
-		<#include '../assets/script.js' />
-	</script>
+	<script src="<@spring.url '/resources/static/js/script.js' />"></script>
+	<link href="<@spring.url '/resources/static/css/style.css' />" rel="stylesheet">
 </head>
