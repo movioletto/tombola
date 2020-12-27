@@ -20,12 +20,13 @@ var bindClickGiocatorePresente = function (url) {
 	$('.giocatore-presente').unbind('click').bind('click', function () {
 		let idTabella = $(this).data('giocatore');
 		let idStanza = $(this).data('stanza');
+		let giocatorePresente = $(this);
 
 		$.ajax({
 			dataType: "json",
 			url: url + idStanza + '/tabella/' + idTabella,
 			success: function (data) {
-				let cartellaGiocatorePresente = $("#cartella-giocatore-presente");
+				let cartellaGiocatorePresente = giocatorePresente.parent().parent().parent().find('#cartella-giocatore-presente');
 
 				cartellaGiocatorePresente.find('.card-title').find('.id-cartella-giocatore-presente').html(camelCaseInTestoNormale(idTabella));
 
