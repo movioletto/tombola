@@ -120,6 +120,7 @@ public class TabelloneServiceImpl implements TabelloneService {
 			StanzaDao temp = modelMapper.map(stanzaEntity, StanzaDao.class);
 			List<String> giocatoriPresenti = new ArrayList<>();
 			List<NumeroUscitoDao> numeroUscitoList = new ArrayList<>();
+			List<VincitaDao> vincitaList = new ArrayList<>();
 
 			if (!CollectionUtils.isEmpty(stanzaEntity.getTabellaList())) {
 				stanzaEntity.getTabellaList().forEach(tabellaEntity -> giocatoriPresenti.add(tabellaEntity.getId().getIdTabella()));
@@ -129,6 +130,11 @@ public class TabelloneServiceImpl implements TabelloneService {
 			if (!CollectionUtils.isEmpty(stanzaEntity.getNumeroUscitoList())) {
 				stanzaEntity.getNumeroUscitoList().forEach(numeroUscitoEntity -> numeroUscitoList.add(new NumeroUscitoDao(stanzaEntity.getIdStanza(), numeroUscitoEntity.getId().getNumero(), numeroUscitoEntity.getData())));
 				temp.setNumeroUscitoList(numeroUscitoList);
+			}
+
+			if (!CollectionUtils.isEmpty(stanzaEntity.getVincitaList())) {
+				stanzaEntity.getVincitaList().forEach(vincitaEntity -> vincitaList.add(new VincitaDao(stanzaEntity.getIdStanza(), vincitaEntity.getId().getIdTabella(), Objects.requireNonNull(PremioEnum.getEnumByCodice(vincitaEntity.getId().getPremio())))));
+				temp.setVincitaList(vincitaList);
 			}
 
 			out.add(temp);
@@ -141,7 +147,7 @@ public class TabelloneServiceImpl implements TabelloneService {
 	public List<VincitaDao> getVincite(String idStanza) {
 		List<VincitaDao> out = new ArrayList<>();
 
-		Optional<List<VincitaEntity>> vincitaEntityListOptional = vincitaRepository.findAllByIdIdStanza(idStanza);
+		Optional<List<VincitaEntity>> vincitaEntityListOptional = vincitaRepository.findAllByIdStanzaIdStanza(idStanza);
 
 		vincitaEntityListOptional.ifPresent(vincitaEntityList -> {
 			vincitaEntityList.forEach(vincitaEntity -> {
@@ -172,7 +178,7 @@ public class TabelloneServiceImpl implements TabelloneService {
 	@Override
 	public boolean existPremio(String idStanza, String idTabella, Integer idPremio) {
 		VincitaEntityKey entityKey = new VincitaEntityKey();
-		entityKey.setIdStanza(idStanza);
+		entityKey.setStanza(new StanzaEntity(idStanza));
 		entityKey.setIdTabella(idTabella);
 		entityKey.setPremio(idPremio);
 
@@ -184,7 +190,7 @@ public class TabelloneServiceImpl implements TabelloneService {
 	@Override
 	public void savePremio(String idStanza, String idTabella, Integer idPremio) {
 		VincitaEntityKey entityKey = new VincitaEntityKey();
-		entityKey.setIdStanza(idStanza);
+		entityKey.setStanza(new StanzaEntity(idStanza));
 		entityKey.setIdTabella(idTabella);
 		entityKey.setPremio(idPremio);
 

@@ -1,14 +1,14 @@
 package it.movioletto.model;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Embeddable
 public class VincitaEntityKey implements Serializable {
 
-	@Column(name = "id_stanza")
-	private String idStanza;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_stanza", nullable = false)
+	private StanzaEntity stanza;
 
 	@Column(name = "premio")
 	private Integer premio;
@@ -16,12 +16,12 @@ public class VincitaEntityKey implements Serializable {
 	@Column(name = "id_tabella")
 	private String idTabella;
 
-	public String getIdStanza() {
-		return idStanza;
+	public StanzaEntity getStanza() {
+		return stanza;
 	}
 
-	public void setIdStanza(String idStanza) {
-		this.idStanza = idStanza;
+	public void setStanza(StanzaEntity stanza) {
+		this.stanza = stanza;
 	}
 
 	public Integer getPremio() {

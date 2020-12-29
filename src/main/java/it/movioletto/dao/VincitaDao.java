@@ -1,11 +1,23 @@
 package it.movioletto.dao;
 
+import it.movioletto.constant.PremioEnum;
+
 public class VincitaDao {
 
 	private String idStanza;
 	private Integer premio;
 	private String nomePremio;
 	private String idTabella;
+
+	public VincitaDao() {
+	}
+
+	public VincitaDao(String idStanza, String idTabella, PremioEnum premioEnum) {
+		this.idStanza = idStanza;
+		this.premio = premioEnum.getCodice();
+		this.nomePremio = premioEnum.getValore();
+		this.idTabella = idTabella;
+	}
 
 	public String getIdStanza() {
 		return idStanza;

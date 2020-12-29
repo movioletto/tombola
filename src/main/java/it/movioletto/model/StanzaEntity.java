@@ -21,6 +21,9 @@ public class StanzaEntity implements Serializable {
 	@OneToMany(mappedBy = "id.stanza", fetch = FetchType.LAZY)
 	private List<NumeroUscitoEntity> numeroUscitoList;
 
+	@OneToMany(mappedBy = "id.stanza", fetch = FetchType.LAZY)
+	private List<VincitaEntity> vincitaList;
+
 	public StanzaEntity() {
 	}
 
@@ -58,5 +61,13 @@ public class StanzaEntity implements Serializable {
 
 	public void setNumeroUscitoList(List<NumeroUscitoEntity> numeroUscitoList) {
 		this.numeroUscitoList = numeroUscitoList;
+	}
+
+	public List<VincitaEntity> getVincitaList() {
+		return vincitaList;
+	}
+
+	public void setVincitaList(List<VincitaEntity> vincitaList) {
+		this.vincitaList = vincitaList;
 	}
 }

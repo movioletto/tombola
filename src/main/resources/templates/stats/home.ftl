@@ -42,6 +42,25 @@
 						</div>
 						<div class="card-body">
 							<h5 class="card-title">
+								Premi vinti:
+							</h5>
+							<p class="card-text">
+                                <#if stanza.vincitaList?? && stanza.vincitaList?has_content>
+                                    <#list stanza.vincitaList as vincita>
+                                        <#if vincita??>
+											<strong class="badge bg-success ms-2">
+                                                ${vincita.nomePremio}
+											</strong>
+											- ${utility.camelCaseInStringaNormale(vincita.idTabella)}
+                                        </#if>
+                                    </#list>
+                                <#else>
+									<span id="nessun-premio-vinto">Nessun premio vinto</span>
+                                </#if>
+							</p>
+						</div>
+						<div class="card-body">
+							<h5 class="card-title">
 								Giocatori Presenti:
 							</h5>
 							<p class="card-text">
@@ -69,10 +88,10 @@
 												class="id-cartella-giocatore-presente"></span>
 									</div>
 									<div class="col-sm text-right">
-								<span id="chiudi-cartella-giocatore-presente" class="btn btn-danger"
-								      style="float: right;">
-									Chiudi cartella giocatore
-					            </span>
+										<span id="chiudi-cartella-giocatore-presente" class="btn btn-danger"
+										      style="float: right;">
+											Chiudi cartella giocatore
+							            </span>
 									</div>
 								</div>
 							</h5>

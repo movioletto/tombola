@@ -16,8 +16,8 @@ public interface VincitaRepository extends CrudRepository<VincitaEntity, Vincita
 	@Query(value =
 			" SELECT MAX(vincita.id.premio) " +
 					" FROM VincitaEntity vincita " +
-					" WHERE vincita.id.idStanza = :idStanza ")
+					" WHERE vincita.id.stanza.idStanza = :idStanza ")
 	Integer findMaxPremio(@Param("idStanza") String idStanza);
 
-	Optional<List<VincitaEntity>> findAllByIdIdStanza(String idStanza);
+	Optional<List<VincitaEntity>> findAllByIdStanzaIdStanza(String idStanza);
 }

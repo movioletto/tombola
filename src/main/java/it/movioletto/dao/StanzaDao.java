@@ -9,6 +9,7 @@ public class StanzaDao implements Serializable {
 	private String nome;
 	private List<String> giocatorePresenteList;
 	private List<NumeroUscitoDao> numeroUscitoList;
+	private List<VincitaDao> vincitaList;
 
 	public StanzaDao() {
 		super();
@@ -49,5 +50,13 @@ public class StanzaDao implements Serializable {
 
 	public void setNumeroUscitoList(List<NumeroUscitoDao> numeroUscitoList) {
 		this.numeroUscitoList = numeroUscitoList;
+	}
+
+	public List<VincitaDao> getVincitaList() {
+		return vincitaList;
+	}
+
+	public void setVincitaList(List<VincitaDao> vincitaList) {
+		this.vincitaList = vincitaList;
 	}
 }
