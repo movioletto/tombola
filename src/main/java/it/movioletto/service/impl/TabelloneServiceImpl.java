@@ -54,6 +54,17 @@ public class TabelloneServiceImpl implements TabelloneService {
 	}
 
 	@Override
+	public StanzaDao creaStanza(String id, String nome) {
+		StanzaEntity entity = new StanzaEntity();
+		entity.setIdStanza(id);
+		entity.setNome(nome);
+
+		StanzaEntity ritorno = stanzaRepository.save(entity);
+
+		return modelMapper.map(ritorno, StanzaDao.class);
+	}
+
+	@Override
 	public StanzaDao getStanza(String idStanza) {
 		Optional<StanzaEntity> entityOptional = stanzaRepository.findById(idStanza);
 
@@ -149,15 +160,13 @@ public class TabelloneServiceImpl implements TabelloneService {
 
 		Optional<List<VincitaEntity>> vincitaEntityListOptional = vincitaRepository.findAllByIdStanzaIdStanza(idStanza);
 
-		vincitaEntityListOptional.ifPresent(vincitaEntityList -> {
-			vincitaEntityList.forEach(vincitaEntity -> {
-				VincitaDao temp = modelMapper.map(vincitaEntity, VincitaDao.class);
-				temp.setPremio(vincitaEntity.getId().getPremio());
-				temp.setNomePremio(PremioEnum.getValoreByCodice(temp.getPremio()));
+		vincitaEntityListOptional.ifPresent(vincitaEntityList -> vincitaEntityList.forEach(vincitaEntity -> {
+			VincitaDao temp = modelMapper.map(vincitaEntity, VincitaDao.class);
+			temp.setPremio(vincitaEntity.getId().getPremio());
+			temp.setNomePremio(PremioEnum.getValoreByCodice(temp.getPremio()));
 
-				out.add(temp);
-			});
-		});
+			out.add(temp);
+		}));
 
 		return out;
 	}

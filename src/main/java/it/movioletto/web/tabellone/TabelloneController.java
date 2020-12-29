@@ -43,6 +43,36 @@ public class TabelloneController {
 		return "redirect:/tabellone/stanza/" + stanzaDao.getIdStanza();
 	}
 
+	@GetMapping("/custom")
+	public String getCustom(Model model) {
+		return "tabellone/custom";
+	}
+
+	@PostMapping("/customAct")
+	public String getCustomAct(Model model, String id, String nome) {
+		if (StringUtils.isBlank(nome)) {
+			return "redirect:/tabellone/custom";
+		}
+		StanzaDao stanzaDao = null;
+
+		String idTemp = id = StringUtils.truncate(id, 20);
+
+		int i = 0;
+		while (tabelloneService.existStanza(idTemp)) {
+			idTemp = StringUtils.truncate(id, 20 - StringUtils.length(String.valueOf(i))) + i++;
+			if (i > 9) {
+				stanzaDao = tabelloneService.creaStanza(StringUtils.abbreviate(nome, 200));
+				break;
+			}
+		}
+
+		if (stanzaDao == null) {
+			stanzaDao = tabelloneService.creaStanza(idTemp, StringUtils.abbreviate(nome, 200));
+		}
+
+		return "redirect:/tabellone/stanza/" + stanzaDao.getIdStanza();
+	}
+
 	@GetMapping("/stanza/{idStanza}")
 	public String getTabellone(Model model, @PathVariable("idStanza") String idStanza, HttpServletRequest request) {
 

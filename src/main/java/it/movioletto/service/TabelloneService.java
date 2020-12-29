@@ -11,6 +11,8 @@ public interface TabelloneService {
 
 	StanzaDao creaStanza(String nome);
 
+	StanzaDao creaStanza(String id, String nome);
+
 	StanzaDao getStanza(String idStanza);
 
 	List<NumeroUscitoDao> getNumeriUsciti(String idStanza);
@@ -30,4 +32,5 @@ public interface TabelloneService {
 	boolean existPremio(String idStanza, String idTabella, Integer idPremio);
 
 	void savePremio(String idStanza, String idTabella, Integer idPremio);
+
 }

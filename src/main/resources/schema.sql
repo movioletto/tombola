@@ -16,7 +16,7 @@ CREATE TABLE aggettivo(
 
 DROP TABLE stanza if exists;
 CREATE TABLE stanza(
-    id_stanza varchar(10),
+    id_stanza varchar(20),
     nome varchar(200),
     PRIMARY KEY (id_stanza)
 );
