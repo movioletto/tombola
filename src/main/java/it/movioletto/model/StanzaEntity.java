@@ -19,6 +19,7 @@ public class StanzaEntity implements Serializable {
 	private List<TabellaEntity> tabellaList;
 
 	@OneToMany(mappedBy = "id.stanza", fetch = FetchType.LAZY)
+	@OrderBy("data DESC")
 	private List<NumeroUscitoEntity> numeroUscitoList;
 
 	@OneToMany(mappedBy = "id.stanza", fetch = FetchType.LAZY)
