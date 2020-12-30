@@ -1,5 +1,13 @@
 $(function () {
 
+	$('.numero-tabella').click(function () {
+		if ($(this).hasClass('numero-uscito-tabella')) {
+			$(this).removeClass('numero-uscito-tabella');
+		} else {
+			$(this).addClass('numero-uscito-tabella');
+		}
+	});
+
 	let urlPremio = $('#url-premio-corrente').val();
 	let idStanza = $('#id-stanza').val();
 	let idTabella = $('#id-tabella').val();
@@ -30,7 +38,7 @@ $(function () {
 			nessunPremioUscito.remove();
 		}
 
-		$('.lista-premi-vinti').append('<strong class="badge bg-success ms-2">' + data.nomePremio + '</strong> - ' + camelCaseInTestoNormale(data.idTabella));
+		$('.lista-premi-vinti').append('<strong class="badge bg-success ms-2">' + data.nomePremio + '</strong> <@spring.message "separatore.premio-vinto"> ' + camelCaseInTestoNormale(data.idTabella));
 
 		$.ajax({
 			dataType: "json",
@@ -42,7 +50,7 @@ $(function () {
 				if (data != null) {
 					dichiarazionePremio.data('id-premio', data.idPremio);
 					dichiarazionePremio.data('nome-premio', data.nomePremio);
-					dichiarazionePremio.html('Ho fatto ' + data.nomePremio + '!');
+					dichiarazionePremio.html('<@spring.message "bottone.cartella.premio"> ' + data.nomePremio);
 
 					dichiarazionePremio.removeAttr("disabled");
 				} else {

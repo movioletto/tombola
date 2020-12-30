@@ -135,18 +135,19 @@ public class TabelloneServiceImpl implements TabelloneService {
 
 			if (!CollectionUtils.isEmpty(stanzaEntity.getTabellaList())) {
 				stanzaEntity.getTabellaList().forEach(tabellaEntity -> giocatoriPresenti.add(tabellaEntity.getId().getIdTabella()));
-				temp.setGiocatorePresenteList(giocatoriPresenti);
 			}
 
 			if (!CollectionUtils.isEmpty(stanzaEntity.getNumeroUscitoList())) {
 				stanzaEntity.getNumeroUscitoList().forEach(numeroUscitoEntity -> numeroUscitoList.add(new NumeroUscitoDao(stanzaEntity.getIdStanza(), numeroUscitoEntity.getId().getNumero(), numeroUscitoEntity.getData())));
-				temp.setNumeroUscitoList(numeroUscitoList);
 			}
 
 			if (!CollectionUtils.isEmpty(stanzaEntity.getVincitaList())) {
 				stanzaEntity.getVincitaList().forEach(vincitaEntity -> vincitaList.add(new VincitaDao(stanzaEntity.getIdStanza(), vincitaEntity.getId().getIdTabella(), Objects.requireNonNull(PremioEnum.getEnumByCodice(vincitaEntity.getId().getPremio())))));
-				temp.setVincitaList(vincitaList);
 			}
+
+			temp.setGiocatorePresenteList(giocatoriPresenti);
+			temp.setNumeroUscitoList(numeroUscitoList);
+			temp.setVincitaList(vincitaList);
 
 			out.add(temp);
 		});

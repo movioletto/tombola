@@ -14,7 +14,7 @@
 	<input type="hidden" id="id-tabella" value="${data.tabella.idTabella}">
 </#if>
 
-<h1 class="titolo">Tombola</h1>
+<h1 class="titolo"><@spring.message "app.titolo" /></h1>
 <div class="container">
     <#if data?? && data.stanza??>
 		<div class="card">
@@ -22,7 +22,7 @@
 				<div class="row">
 					<div class="col-sm">
 						<h5 class="card-titolo">
-							Nome partita:
+                            <@spring.message "form.nome-partita" />
 						</h5>
 						<p class="card-testo">
                             <#if data.stanza.nome??>
@@ -32,7 +32,7 @@
 					</div>
 					<div class="col-sm">
 						<h5 class="card-titolo">
-							ID partita:
+                            <@spring.message "form.id-partita" />
 						</h5>
 						<p class="card-testo">
                             <#if data.stanza.idStanza??>
@@ -44,7 +44,7 @@
 				<div class="row">
 					<div class="col-sm">
 						<h5 class="card-titolo">
-							Nome cartella:
+							<@spring.message "form.nome-cartella" />
 						</h5>
 						<p class="card-testo">
                             <#if data.tabella.idTabella??>
@@ -55,7 +55,7 @@
 					<div class="col-sm">
 						<h5 class="card-titolo">
 							<label for="auto-selezione">
-								Selezione automatica:
+								<@spring.message "form.selezione-automatica" />
 							</label>
 						</h5>
 						<p class="card-testo">
@@ -68,80 +68,23 @@
     </#if>
 
 	<div id="premi-vinti" class="card">
-		<div class="card-body">
-			<h5 class="card-title">
-				Premi vinti:
-			</h5>
-			<p class="card-text lista-premi-vinti">
-                <#if data?? && data.vincitaList?? && data.vincitaList?has_content>
-                    <#list data.vincitaList as vincita>
-                        <#if vincita??>
-							<strong class="badge bg-success ms-2">
-                                ${vincita.nomePremio}
-							</strong>
-							- ${utility.camelCaseInStringaNormale(vincita.idTabella)}
-                        </#if>
-                    </#list>
-                <#else>
-					<span id="nessun-premio-vinto">Nessun premio vinto</span>
-                </#if>
-			</p>
-		</div>
+		<@layout.premiVinti data.vincitaList />
 	</div>
 
 	<div id="numeri-usciti" class="card">
-		<div class="card-body">
-			<h5 class="card-title">
-				Numero usciti:
-			</h5>
-			<p class="card-text lista-numeri-usciti">
-                <#if data?? && data.numeroUscitoList?? && data.numeroUscitoList?has_content>
-                    <#list data.numeroUscitoList as numeroUscito>
-                        <#if numeroUscito.numero??>
-							<span class="numero-uscito">
-								${numeroUscito.numero}
-							</span>
-                            <#if numeroUscito?is_first>
-								<span class="separatore"></span>
-                            </#if>
-                        </#if>
-                    </#list>
-                <#else>
-					<span id="nessun-numero-uscito">Nessun numero estratto</span>
-                </#if>
-			</p>
-		</div>
+        <@layout.numeriUsciti data.numeroUscitoList true />
 	</div>
 
     <#if data?? && data.tabella?? && data.tabella.sequenza?? && data.tabella.sequenza?has_content>
 		<div class="row">
-			<div class="col-sm">
-				<table>
-					<tbody>
-                    <#list data.tabella.sequenza as riga>
-						<tr>
-                            <#list riga as numeroRiga>
-								<td style="width: 11.11%;">
-                                    <#if numeroRiga.numero != 0>
-										<span id="numero-${numeroRiga.numero}"
-										      class="numero-tabella ${numeroRiga.uscito?string('numero-uscito-tabella', '')}">
-                                            ${numeroRiga.numero}
-	                                    </span>
-                                    </#if>
-								</td>
-                            </#list>
-						</tr>
-                    </#list>
-					</tbody>
-				</table>
-			</div>
+            <@layout.cartella data.tabella.sequenza 'style="width: 11.11%;"' />
 		</div>
     </#if>
 
     <#if data?? && data.premioCorrente?? && data.premioCorrente.codice?? && data.premioCorrente.valore??>
 		<button id="dichiarazione-premio" class="btn btn-danger dichiarazione-premio"
 		        data-id-premio="${data.premioCorrente.codice}" data-nome-premio="${data.premioCorrente.valore}">
-			Ho fatto ${data.premioCorrente.valore}!
+			<@spring.message "bottone.cartella.premio" /> ${data.premioCorrente.valore}
 		</button>
     </#if>
 
