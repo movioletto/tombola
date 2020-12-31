@@ -4,6 +4,9 @@
 <script type="text/javascript" src="<@spring.url '/resources/static/js/cartella/script.js' />"></script>
 <body>
 
+<input type="hidden" id="separatore-premio-vinto" value="<@spring.message "separatore.premio-vinto" />">
+<input type="hidden" id="bottone-cartella-premio" value="<@spring.message "bottone.cartella.premio" />">
+
 <#if data?? && data.stanza?? && data.stanza.idStanza??>
 	<input type="hidden" id="url-premio-corrente"
 	       value="<@spring.url '/tabellone/stanza/${data.stanza.idStanza}/premioCorrente/' />">

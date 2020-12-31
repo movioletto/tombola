@@ -38,7 +38,7 @@ $(function () {
 			nessunPremioUscito.remove();
 		}
 
-		$('.lista-premi-vinti').append('<strong class="badge bg-success ms-2">' + data.nomePremio + '</strong> <@spring.message "separatore.premio-vinto"> ' + camelCaseInTestoNormale(data.idTabella));
+		$('.lista-premi-vinti').append('<strong class="badge bg-success ms-2">' + data.nomePremio + '</strong> ' + $('#separatore-premio-vinto').val() + camelCaseInTestoNormale(data.idTabella));
 
 		$.ajax({
 			dataType: "json",
@@ -50,7 +50,7 @@ $(function () {
 				if (data != null) {
 					dichiarazionePremio.data('id-premio', data.idPremio);
 					dichiarazionePremio.data('nome-premio', data.nomePremio);
-					dichiarazionePremio.html('<@spring.message "bottone.cartella.premio"> ' + data.nomePremio);
+					dichiarazionePremio.html($('#bottone-cartella-premio').val() + ' ' + data.nomePremio);
 
 					dichiarazionePremio.removeAttr("disabled");
 				} else {

@@ -33,7 +33,7 @@ $(function () {
 
 					$('#cartella-giocatore-presente').addClass('d-none');
 
-					$('.lista-premi-vinti').append('<strong class="badge bg-success ms-2">' + data.nomePremio + '</strong> <@spring.message "separatore.premio-vinto"> ' + camelCaseInTestoNormale(data.idTabella));
+					$('.lista-premi-vinti').append('<strong class="badge bg-success ms-2">' + data.nomePremio + '</strong> ' + $('#separatore-premio-vinto').val() + camelCaseInTestoNormale(data.idTabella));
 
 					stompClient.send('/partita/stanza/' + idStanza, {}, JSON.stringify({
 						'azione': data.azione,
@@ -70,7 +70,7 @@ $(function () {
 	let aggiornaPremio = function (data) {
 		let giocatorePresenteSelezionato = $('#giocatore-' + data.idTabella);
 		let nomeGiocatore = giocatorePresenteSelezionato.html();
-		giocatorePresenteSelezionato.html(nomeGiocatore + '<span class="badge rounded-pill bg-danger ms-2"><@spring.message "notifica-premio"></span>');
+		giocatorePresenteSelezionato.html(nomeGiocatore + '<span class="badge rounded-pill bg-danger ms-2">' + $('#notifica-premio').val() + '</span>');
 
 		let confermaPremio = $('#conferma-premio');
 		confermaPremio.data('id-premio', data.idPremio);

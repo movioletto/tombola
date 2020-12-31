@@ -4,6 +4,9 @@
 <script type="text/javascript" src="<@spring.url '/resources/static/js/tabellone/script.js' />"></script>
 <body>
 
+<input type="hidden" id="separatore-premio-vinto" value="<@spring.message "separatore.premio-vinto" />">
+<input type="hidden" id="notifica-premio" value="<@spring.message "notifica-premio" />">
+
 <#if data?? && data.stanza?? && data.stanza.idStanza??>
 	<input type="hidden" id="url-numero" value="<@spring.url '/tabellone/stanza/${data.stanza.idStanza}/numero' />">
 	<input type="hidden" id="url-giocatore" value="<@spring.url '/tabellone/stanza/' />">
