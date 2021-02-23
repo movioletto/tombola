@@ -1,0 +1,33 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /tombola
+spring:
+  mvc:
+    static-path-pattern: /resources/static/**
+  freemarker:
+    template-loader-path: classpath:/templates
+    suffix: .ftl
+  datasource:
+    url: jdbc:h2:mem:tombola
+    driverClassName: org.h2.Driver
+    username: tombola
+    password: tombola
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        validator:
+          apply_to_ddl: false
+  h2:
+    console:
+      enabled: false
+  banner:
+    location: classpath:banner.txt
+logging:
+  level:
+    org:
+      springframework: INFO
