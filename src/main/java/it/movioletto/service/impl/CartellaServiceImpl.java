@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.*;
 
 @Service
@@ -23,6 +25,13 @@ public class CartellaServiceImpl implements CartellaService {
 
 	@Autowired
 	private TabellaRepository tabellaRepository;
+
+	private final Random randomNumeri = SecureRandom.getInstanceStrong();
+	private final Random randomAnimale = SecureRandom.getInstanceStrong();
+	private final Random randomAggettivo = SecureRandom.getInstanceStrong();
+
+	public CartellaServiceImpl() throws NoSuchAlgorithmException {
+	}
 
 	@Override
 	public TabellaDao creaTabella(String idStanza) {
@@ -49,7 +58,6 @@ public class CartellaServiceImpl implements CartellaService {
 	}
 
 	private String creaSequenza(String idStanza) {
-		Random randomNumeri = new Random();
 		int numeroNumeri = 90;
 
 		StringBuilder sequenza;
@@ -154,9 +162,6 @@ public class CartellaServiceImpl implements CartellaService {
 	}
 
 	private String creaIdTabella(String idStanza) {
-		Random randomAnimale = new Random();
-		Random randomAggettivo = new Random();
-
 		int numeroAnimali = (int) animaleRepository.count();
 		int numeroAggettivi = (int) aggettivoRepository.count();
 

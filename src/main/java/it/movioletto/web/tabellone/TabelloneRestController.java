@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Random;
 
@@ -29,7 +31,9 @@ public class TabelloneRestController {
 	@Autowired
 	private CartellaService cartellaService;
 
-	public TabelloneRestController(SimpMessagingTemplate simpMessagingTemplate) {
+	private final Random random = SecureRandom.getInstanceStrong();
+
+	public TabelloneRestController(SimpMessagingTemplate simpMessagingTemplate) throws NoSuchAlgorithmException {
 		this.simpMessagingTemplate = simpMessagingTemplate;
 	}
 
@@ -42,7 +46,6 @@ public class TabelloneRestController {
 
 		List<NumeroUscitoDao> numeriUsciti = tabelloneService.getNumeriUsciti(idStanza);
 
-		Random random = new Random();
 		int numeroEstratto;
 		do {
 			numeroEstratto = random.nextInt(90) + 1;

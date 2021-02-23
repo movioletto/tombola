@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.*;
 
 @Service
@@ -31,12 +33,16 @@ public class TabelloneServiceImpl implements TabelloneService {
 	@Autowired
 	private ModelMapper modelMapper;
 
+	private final Random random = SecureRandom.getInstanceStrong();
+
+	public TabelloneServiceImpl() throws NoSuchAlgorithmException {
+	}
+
 	@Override
 	public StanzaDao creaStanza(String nome) {
 		int leftLimit = 48;
 		int rightLimit = 122;
 		int targetStringLength = 10;
-		Random random = new Random();
 
 		String generatedString = random.ints(leftLimit, rightLimit + 1)
 				.filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
