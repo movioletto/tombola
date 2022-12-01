@@ -1,31 +1,28 @@
 package it.movioletto.model;
 
-import javax.persistence.*;
 import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Embeddable
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class NumeroUscitoEntityKey implements Serializable {
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_stanza", nullable = false)
-	private StanzaEntity stanza;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_stanza", nullable = false)
+  private StanzaEntity stanza;
 
-	@Column(name = "numero")
-	private Integer numero;
+  @Column(name = "numero")
+  private Integer numero;
 
-	public StanzaEntity getStanza() {
-		return stanza;
-	}
-
-	public void setStanza(StanzaEntity stanza) {
-		this.stanza = stanza;
-	}
-
-	public Integer getNumero() {
-		return numero;
-	}
-
-	public void setNumero(Integer numero) {
-		this.numero = numero;
-	}
 }

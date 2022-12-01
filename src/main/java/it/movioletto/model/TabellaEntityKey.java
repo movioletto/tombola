@@ -1,31 +1,28 @@
 package it.movioletto.model;
 
-import javax.persistence.*;
 import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Embeddable
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TabellaEntityKey implements Serializable {
 
-	@Column(name = "id_tabella")
-	private String idTabella;
+  @Column(name = "id_tabella")
+  private String idTabella;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_stanza", nullable = false)
-	private StanzaEntity stanza;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_stanza", nullable = false)
+  private StanzaEntity stanza;
 
-	public String getIdTabella() {
-		return idTabella;
-	}
-
-	public void setIdTabella(String idTabella) {
-		this.idTabella = idTabella;
-	}
-
-	public StanzaEntity getStanza() {
-		return stanza;
-	}
-
-	public void setStanza(StanzaEntity stanza) {
-		this.stanza = stanza;
-	}
 }

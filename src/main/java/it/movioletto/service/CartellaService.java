@@ -1,14 +1,14 @@
 package it.movioletto.service;
 
-import it.movioletto.dao.TabellaDao;
+import it.movioletto.dto.TabellaDto;
 
 public interface CartellaService {
 
-	TabellaDao creaTabella(String idStanza);
+  TabellaDto creaTabella(String idStanza);
 
-	boolean existTabella(String idTabella, String idStanza);
+  boolean existTabella(String idTabella, String idStanza);
 
-	boolean existSequenza(String sequenza, String idStanza);
+  boolean existSequenza(String sequenza, String idStanza);
 
-	TabellaDao getTabella(String idTabella, String idStanza);
+  TabellaDto getTabella(String idTabella, String idStanza);
 }

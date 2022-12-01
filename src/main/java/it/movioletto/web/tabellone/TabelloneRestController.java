@@ -2,116 +2,118 @@ package it.movioletto.web.tabellone;
 
 import it.movioletto.constant.AzioneEnum;
 import it.movioletto.constant.PremioEnum;
-import it.movioletto.dao.MessaggioDao;
-import it.movioletto.dao.NumeroUscitoDao;
-import it.movioletto.dao.TabellaDao;
+import it.movioletto.dto.MessaggioDto;
+import it.movioletto.dto.NumeroUscitoDto;
+import it.movioletto.dto.TabellaDto;
 import it.movioletto.service.CartellaService;
 import it.movioletto.service.TabelloneService;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.List;
+import java.util.Random;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.List;
-import java.util.Random;
-
 @RestController
 @RequestMapping("/tabellone")
 public class TabelloneRestController {
 
-	private final SimpMessagingTemplate simpMessagingTemplate;
+  private final SimpMessagingTemplate simpMessagingTemplate;
 
-	@Autowired
-	private TabelloneService tabelloneService;
+  private final TabelloneService tabelloneService;
 
-	@Autowired
-	private CartellaService cartellaService;
+  private final CartellaService cartellaService;
 
-	private final Random random = SecureRandom.getInstanceStrong();
+  private final Random random = SecureRandom.getInstanceStrong();
 
-	public TabelloneRestController(SimpMessagingTemplate simpMessagingTemplate) throws NoSuchAlgorithmException {
-		this.simpMessagingTemplate = simpMessagingTemplate;
-	}
+  public TabelloneRestController(SimpMessagingTemplate simpMessagingTemplate,
+      TabelloneService tabelloneService, CartellaService cartellaService)
+      throws NoSuchAlgorithmException {
+    this.simpMessagingTemplate = simpMessagingTemplate;
+    this.tabelloneService = tabelloneService;
+    this.cartellaService = cartellaService;
+  }
 
-	@GetMapping("/stanza/{idStanza}/numero")
-	public MessaggioDao getNumeroTabellone(@PathVariable("idStanza") String idStanza) {
+  @GetMapping("/stanza/{idStanza}/numero")
+  public MessaggioDto getNumeroTabellone(@PathVariable("idStanza") String idStanza) {
 
-		if (!tabelloneService.existStanza(idStanza)) {
-			return null;
-		}
+    if (!tabelloneService.existStanza(idStanza)) {
+      return null;
+    }
 
-		List<NumeroUscitoDao> numeriUsciti = tabelloneService.getNumeriUsciti(idStanza);
+    List<NumeroUscitoDto> numeriUsciti = tabelloneService.getNumeriUsciti(idStanza);
 
-		int numeroEstratto;
-		do {
-			numeroEstratto = random.nextInt(90) + 1;
-		} while (numeriUsciti.contains(new NumeroUscitoDao(numeroEstratto)));
+    int numeroEstratto;
+    do {
+      numeroEstratto = random.nextInt(90) + 1;
+    } while (numeriUsciti.contains(new NumeroUscitoDto(numeroEstratto)));
 
-		tabelloneService.saveNumeroEstratto(idStanza, numeroEstratto);
+    tabelloneService.saveNumeroEstratto(idStanza, numeroEstratto);
 
-		MessaggioDao messaggioDao = new MessaggioDao();
-		messaggioDao.setAzione(AzioneEnum.NUMERO_USCITO.getCodice());
-		messaggioDao.setNumeroUscito(numeroEstratto);
+    MessaggioDto messaggioDto = MessaggioDto.builder()
+        .azione(AzioneEnum.NUMERO_USCITO.getCodice())
+        .numeroUscito(numeroEstratto)
+        .build();
 
-		simpMessagingTemplate.convertAndSend("/partita/stanza/" + idStanza, messaggioDao);
+    simpMessagingTemplate.convertAndSend("/partita/stanza/" + idStanza, messaggioDto);
 
-		return messaggioDao;
-	}
+    return messaggioDto;
+  }
 
-	@GetMapping("/stanza/{idStanza}/tabella/{idTabella}")
-	public TabellaDao getTabellaStanza(@PathVariable("idStanza") String idStanza, @PathVariable("idTabella") String idTabella) {
+  @GetMapping("/stanza/{idStanza}/tabella/{idTabella}")
+  public TabellaDto getTabellaStanza(@PathVariable("idStanza") String idStanza,
+      @PathVariable("idTabella") String idTabella) {
 
-		if (!tabelloneService.existStanza(idStanza) || !cartellaService.existTabella(idTabella, idStanza)) {
-			return null;
-		}
+    if (!tabelloneService.existStanza(idStanza) || !cartellaService.existTabella(idTabella,
+        idStanza)) {
+      return null;
+    }
 
-		List<NumeroUscitoDao> numeriUsciti = tabelloneService.getNumeriUsciti(idStanza);
+    TabellaDto tabella = cartellaService.getTabella(idTabella, idStanza);
+    tabella.setNumeriUsciti(tabelloneService.getNumeriUsciti(idStanza));
 
-		TabellaDao tabella = cartellaService.getTabella(idTabella, idStanza);
-		tabella.setNumeriUsciti(numeriUsciti);
+    return tabella;
+  }
 
-		return tabella;
-	}
+  @GetMapping("/stanza/{idStanza}/premioCorrente")
+  public MessaggioDto getPremioCorrente(@PathVariable("idStanza") String idStanza) {
 
-	@GetMapping("/stanza/{idStanza}/premioCorrente")
-	public MessaggioDao getPremioCorrente(@PathVariable("idStanza") String idStanza) {
+    if (!tabelloneService.existStanza(idStanza)) {
+      return null;
+    }
 
-		if (!tabelloneService.existStanza(idStanza)) {
-			return null;
-		}
+    PremioEnum premioCorrente = tabelloneService.getPremioCorrente(idStanza);
 
-		PremioEnum premioCorrente = tabelloneService.getPremioCorrente(idStanza);
+    if (premioCorrente == null) {
+      return null;
+    }
 
-		if (premioCorrente == null) {
-			return null;
-		}
+    return MessaggioDto.builder()
+        .idPremio(premioCorrente.getCodice())
+        .nomePremio(premioCorrente.getValore())
+        .build();
+  }
 
-		MessaggioDao messaggioDao = new MessaggioDao();
-		messaggioDao.setIdPremio(premioCorrente.getCodice());
-		messaggioDao.setNomePremio(premioCorrente.getValore());
-		return messaggioDao;
-	}
+  @GetMapping("/stanza/{idStanza}/premio/{idTabella}/{idPremio}")
+  public MessaggioDto savePremio(@PathVariable("idStanza") String idStanza,
+      @PathVariable("idTabella") String idTabella, @PathVariable("idPremio") Integer idPremio) {
 
-	@GetMapping("/stanza/{idStanza}/premio/{idTabella}/{idPremio}")
-	public MessaggioDao savePremio(@PathVariable("idStanza") String idStanza, @PathVariable("idTabella") String idTabella, @PathVariable("idPremio") Integer idPremio) {
+    if (!tabelloneService.existStanza(idStanza) || !cartellaService.existTabella(idTabella,
+        idStanza) || tabelloneService.existPremio(idStanza, idTabella, idPremio)) {
+      return null;
+    }
 
-		if (!tabelloneService.existStanza(idStanza) || !cartellaService.existTabella(idTabella, idStanza) || tabelloneService.existPremio(idStanza, idTabella, idPremio)) {
-			return null;
-		}
+    tabelloneService.savePremio(idStanza, idTabella, idPremio);
 
-		tabelloneService.savePremio(idStanza, idTabella, idPremio);
-
-		MessaggioDao messaggioDao = new MessaggioDao();
-		messaggioDao.setAzione(4);
-		messaggioDao.setIdTabella(idTabella);
-		messaggioDao.setNomePremio(PremioEnum.getValoreByCodice(idPremio));
-		messaggioDao.setIdPremio(idPremio);
-
-		return messaggioDao;
-	}
+    return MessaggioDto.builder()
+        .azione(4)
+        .idTabella(idTabella)
+        .nomePremio(PremioEnum.getValoreByCodice(idPremio))
+        .idPremio(idPremio)
+        .build();
+  }
 
 }

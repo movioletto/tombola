@@ -1,11 +1,14 @@
 package it.movioletto.web.cartella;
 
 import it.movioletto.constant.PremioEnum;
-import it.movioletto.dao.*;
+import it.movioletto.dto.MessaggioDto;
+import it.movioletto.dto.NumeroUscitoDto;
+import it.movioletto.dto.TabellaDto;
 import it.movioletto.service.CartellaService;
 import it.movioletto.service.TabelloneService;
 import it.movioletto.web.cartella.data.CartellaData;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import lombok.extern.java.Log;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -15,86 +18,85 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
-import java.util.logging.Logger;
-
 @Controller
 @RequestMapping("/cartella")
+@Log
 public class CartellaController {
 
-	private final Logger logger = Logger.getLogger(CartellaController.class.getName());
+  private final CartellaService cartellaService;
 
-	@Autowired
-	private CartellaService cartellaService;
+  private final TabelloneService tabelloneService;
 
-	@Autowired
-	private TabelloneService tabelloneService;
+  public CartellaController(CartellaService cartellaService, TabelloneService tabelloneService) {
+    this.cartellaService = cartellaService;
+    this.tabelloneService = tabelloneService;
+  }
 
-	@GetMapping("/new")
-	public String getNew(Model model) {
-		return "cartella/new";
-	}
+  @GetMapping("/new")
+  public String getNew() {
+    return "cartella/new";
+  }
 
-	@PostMapping("/newAct")
-	public String getNewActPost(Model model, String idStanza) {
-		if (!tabelloneService.existStanza(idStanza)) {
-			return "redirect:/";
-		}
-		TabellaDao tabellaDao = cartellaService.creaTabella(idStanza);
+  @PostMapping("/newAct")
+  public String getNewActPost(String idStanza) {
+    if (!tabelloneService.existStanza(idStanza)) {
+      return "redirect:/";
+    }
+    TabellaDto tabellaDto = cartellaService.creaTabella(idStanza);
 
-		return "redirect:/cartella/stanza/" + tabellaDao.getIdStanza() + "/cartella/" + tabellaDao.getIdTabella();
-	}
+    return "redirect:/cartella/stanza/" + tabellaDto.getIdStanza() + "/cartella/"
+        + tabellaDto.getIdTabella();
+  }
 
-	@GetMapping("/new/{idStanza}")
-	public String getNewAct(Model model, @PathVariable("idStanza") String idStanza) {
-		if (!tabelloneService.existStanza(idStanza)) {
-			return "redirect:/";
-		}
-		TabellaDao tabellaDao = cartellaService.creaTabella(idStanza);
+  @GetMapping("/new/{idStanza}")
+  public String getNewAct(@PathVariable("idStanza") String idStanza) {
+    if (!tabelloneService.existStanza(idStanza)) {
+      return "redirect:/";
+    }
+    TabellaDto tabellaDto = cartellaService.creaTabella(idStanza);
 
-		return "redirect:/cartella/stanza/" + tabellaDao.getIdStanza() + "/cartella/" + tabellaDao.getIdTabella();
-	}
+    return "redirect:/cartella/stanza/" + tabellaDto.getIdStanza() + "/cartella/"
+        + tabellaDto.getIdTabella();
+  }
 
-	@GetMapping("/stanza/{idStanza}/cartella/{idTabella}")
-	public String getTabella(Model model, @PathVariable("idStanza") String idStanza, @PathVariable("idTabella") String idTabella) {
+  @GetMapping("/stanza/{idStanza}/cartella/{idTabella}")
+  public String getTabella(Model model, @PathVariable("idStanza") String idStanza,
+      @PathVariable("idTabella") String idTabella) {
 
-		if (!tabelloneService.existStanza(idStanza) || !cartellaService.existTabella(idTabella, idStanza)) {
-			return "redirect:/";
-		}
+    if (!tabelloneService.existStanza(idStanza) || !cartellaService.existTabella(idTabella,
+        idStanza)) {
+      return "redirect:/";
+    }
 
-		CartellaData data = new CartellaData();
+    List<NumeroUscitoDto> numeriUsciti = tabelloneService.getNumeriUsciti(idStanza);
 
-		StanzaDao stanzaDao = tabelloneService.getStanza(idStanza);
-		data.setStanza(stanzaDao);
+    CartellaData data = CartellaData.builder()
+        .stanza(tabelloneService.getStanza(idStanza))
+        .numeroUscitoList(numeriUsciti)
+        .vincitaList(tabelloneService.getVincite(idStanza))
+        .premioCorrente(tabelloneService.getPremioCorrente(idStanza))
+        .build();
 
-		List<NumeroUscitoDao> numeriUsciti = tabelloneService.getNumeriUsciti(idStanza);
-		data.setNumeroUscitoList(numeriUsciti);
+    TabellaDto tabella = cartellaService.getTabella(idTabella, idStanza);
+    tabella.setNumeriUsciti(numeriUsciti);
+    data.setTabella(tabella);
 
-		TabellaDao tabella = cartellaService.getTabella(idTabella, idStanza);
-		tabella.setNumeriUsciti(numeriUsciti);
-		data.setTabella(tabella);
+    model.addAttribute("data", data);
 
-		List<VincitaDao> vincitaList = tabelloneService.getVincite(idStanza);
-		data.setVincitaList(vincitaList);
-		PremioEnum premioCorrente = tabelloneService.getPremioCorrente(idStanza);
-		data.setPremioCorrente(premioCorrente);
+    return "cartella/cartella";
+  }
 
-		model.addAttribute("data", data);
+  @MessageMapping("/giocatore/{idStanza}")
+  @SendTo("/partita/giocatore/{idStanza}")
+  public MessaggioDto messaggi(MessaggioDto messaggioDto) {
 
-		return "cartella/cartella";
-	}
+    log.info("messaggioDto:" + messaggioDto.toString());
+    if (messaggioDto.getAzione() != null && messaggioDto.getAzione() == 3) {
+      if (messaggioDto.getIdPremio() != null) {
+        messaggioDto.setNomePremio(PremioEnum.getValoreByCodice(messaggioDto.getIdPremio()));
+      }
+    }
 
-	@MessageMapping("/giocatore/{idStanza}")
-	@SendTo("/partita/giocatore/{idStanza}")
-	public MessaggioDao messaggi(MessaggioDao messaggioDao) {
-
-		logger.info("messaggioDao:" + messaggioDao.toString());
-		if (messaggioDao.getAzione() != null && messaggioDao.getAzione() == 3) {
-			if (messaggioDao.getIdPremio() != null) {
-				messaggioDao.setNomePremio(PremioEnum.getValoreByCodice(messaggioDao.getIdPremio()));
-			}
-		}
-
-		return messaggioDao;
-	}
+    return messaggioDto;
+  }
 }

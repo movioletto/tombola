@@ -1,74 +1,46 @@
 package it.movioletto.model;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Table(name = "stanza")
 @Entity
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class StanzaEntity implements Serializable {
 
-	@Id
-	@Column(name = "id_stanza")
-	private String idStanza;
+  @Id
+  @Column(name = "id_stanza")
+  private String idStanza;
 
-	@Column(name = "nome")
-	private String nome;
+  @Column(name = "nome")
+  private String nome;
 
-	@OneToMany(mappedBy = "id.stanza", fetch = FetchType.LAZY)
-	private List<TabellaEntity> tabellaList;
+  @OneToMany(mappedBy = "id.stanza", fetch = FetchType.LAZY)
+  private List<TabellaEntity> tabellaList;
 
-	@OneToMany(mappedBy = "id.stanza", fetch = FetchType.LAZY)
-	@OrderBy("data DESC")
-	private List<NumeroUscitoEntity> numeroUscitoList;
+  @OneToMany(mappedBy = "id.stanza", fetch = FetchType.LAZY)
+  @OrderBy("data DESC")
+  private List<NumeroUscitoEntity> numeroUscitoList;
 
-	@OneToMany(mappedBy = "id.stanza", fetch = FetchType.LAZY)
-	private List<VincitaEntity> vincitaList;
+  @OneToMany(mappedBy = "id.stanza", fetch = FetchType.LAZY)
+  private List<VincitaEntity> vincitaList;
 
-	public StanzaEntity() {
-	}
+  public StanzaEntity(String idStanza) {
+    this.idStanza = idStanza;
+  }
 
-	public StanzaEntity(String idStanza) {
-		this.idStanza = idStanza;
-	}
-
-	public String getIdStanza() {
-		return idStanza;
-	}
-
-	public void setIdStanza(String idStanza) {
-		this.idStanza = idStanza;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public List<TabellaEntity> getTabellaList() {
-		return tabellaList;
-	}
-
-	public void setTabellaList(List<TabellaEntity> tabellaList) {
-		this.tabellaList = tabellaList;
-	}
-
-	public List<NumeroUscitoEntity> getNumeroUscitoList() {
-		return numeroUscitoList;
-	}
-
-	public void setNumeroUscitoList(List<NumeroUscitoEntity> numeroUscitoList) {
-		this.numeroUscitoList = numeroUscitoList;
-	}
-
-	public List<VincitaEntity> getVincitaList() {
-		return vincitaList;
-	}
-
-	public void setVincitaList(List<VincitaEntity> vincitaList) {
-		this.vincitaList = vincitaList;
-	}
 }

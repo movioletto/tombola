@@ -1,218 +1,238 @@
 package it.movioletto.service.impl;
 
 import it.movioletto.constant.PremioEnum;
-import it.movioletto.dao.NumeroUscitoDao;
-import it.movioletto.dao.StanzaDao;
-import it.movioletto.dao.VincitaDao;
-import it.movioletto.model.*;
+import it.movioletto.dto.NumeroUscitoDto;
+import it.movioletto.dto.StanzaDto;
+import it.movioletto.dto.VincitaDto;
+import it.movioletto.model.NumeroUscitoEntity;
+import it.movioletto.model.NumeroUscitoEntityKey;
+import it.movioletto.model.StanzaEntity;
+import it.movioletto.model.VincitaEntity;
+import it.movioletto.model.VincitaEntityKey;
 import it.movioletto.repository.NumeroUscitoRepository;
 import it.movioletto.repository.StanzaRepository;
 import it.movioletto.repository.VincitaRepository;
 import it.movioletto.service.TabelloneService;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class TabelloneServiceImpl implements TabelloneService {
 
-	@Autowired
-	private StanzaRepository stanzaRepository;
+  private final Random random = SecureRandom.getInstanceStrong();
+  private final StanzaRepository stanzaRepository;
+  private final NumeroUscitoRepository numeroUscitoRepository;
+  private final VincitaRepository vincitaRepository;
+  private final ModelMapper modelMapper;
 
-	@Autowired
-	private NumeroUscitoRepository numeroUscitoRepository;
+  public TabelloneServiceImpl(StanzaRepository stanzaRepository,
+      NumeroUscitoRepository numeroUscitoRepository, VincitaRepository vincitaRepository,
+      ModelMapper modelMapper) throws NoSuchAlgorithmException {
+    this.stanzaRepository = stanzaRepository;
+    this.numeroUscitoRepository = numeroUscitoRepository;
+    this.vincitaRepository = vincitaRepository;
+    this.modelMapper = modelMapper;
+  }
 
-	@Autowired
-	private VincitaRepository vincitaRepository;
+  @Override
+  public StanzaDto creaStanza(String nome) {
+    int leftLimit = 48;
+    int rightLimit = 122;
+    int targetStringLength = 10;
 
-	@Autowired
-	private ModelMapper modelMapper;
+    String generatedString = random.ints(leftLimit, rightLimit + 1)
+        .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+        .limit(targetStringLength)
+        .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+        .toString();
 
-	private final Random random = SecureRandom.getInstanceStrong();
+    StanzaEntity entity = StanzaEntity.builder()
+        .idStanza(generatedString)
+        .nome(nome)
+        .build();
 
-	public TabelloneServiceImpl() throws NoSuchAlgorithmException {
-	}
+    return modelMapper.map(stanzaRepository.save(entity), StanzaDto.class);
+  }
 
-	@Override
-	public StanzaDao creaStanza(String nome) {
-		int leftLimit = 48;
-		int rightLimit = 122;
-		int targetStringLength = 10;
+  @Override
+  public StanzaDto creaStanza(String id, String nome) {
+    StanzaEntity entity = StanzaEntity.builder()
+        .idStanza(id)
+        .nome(nome)
+        .build();
 
-		String generatedString = random.ints(leftLimit, rightLimit + 1)
-				.filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-				.limit(targetStringLength)
-				.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-				.toString();
+    return modelMapper.map(stanzaRepository.save(entity), StanzaDto.class);
+  }
 
-		StanzaEntity entity = new StanzaEntity();
-		entity.setIdStanza(generatedString);
-		entity.setNome(nome);
+  @Override
+  public StanzaDto getStanza(String idStanza) {
+    Optional<StanzaEntity> entityOptional = stanzaRepository.findById(idStanza);
 
-		StanzaEntity ritorno = stanzaRepository.save(entity);
+    return entityOptional.map(stanzaEntity -> modelMapper.map(stanzaEntity, StanzaDto.class))
+        .orElse(null);
+  }
 
-		return modelMapper.map(ritorno, StanzaDao.class);
-	}
+  @Override
+  public List<NumeroUscitoDto> getNumeriUsciti(String idStanza) {
+    List<NumeroUscitoDto> out = new ArrayList<>();
 
-	@Override
-	public StanzaDao creaStanza(String id, String nome) {
-		StanzaEntity entity = new StanzaEntity();
-		entity.setIdStanza(id);
-		entity.setNome(nome);
+    Optional<StanzaEntity> stanzaEntityOptional = stanzaRepository.findById(idStanza);
 
-		StanzaEntity ritorno = stanzaRepository.save(entity);
+    stanzaEntityOptional.ifPresent(stanzaEntity -> {
+      if (!CollectionUtils.isEmpty(stanzaEntity.getNumeroUscitoList())) {
+        stanzaEntity.getNumeroUscitoList().forEach(numeroUscitoEntity -> out.add(
+            new NumeroUscitoDto(stanzaEntity.getIdStanza(), numeroUscitoEntity.getId().getNumero(),
+                numeroUscitoEntity.getData())));
+      }
+    });
 
-		return modelMapper.map(ritorno, StanzaDao.class);
-	}
+    return out;
+  }
 
-	@Override
-	public StanzaDao getStanza(String idStanza) {
-		Optional<StanzaEntity> entityOptional = stanzaRepository.findById(idStanza);
+  @Override
+  public void saveNumeroEstratto(String idStanza, int numeroEstratto) {
+    NumeroUscitoEntityKey entityKey = NumeroUscitoEntityKey.builder()
+        .stanza(new StanzaEntity(idStanza))
+        .numero(numeroEstratto)
+        .build();
 
-		return entityOptional.map(stanzaEntity -> modelMapper.map(stanzaEntity, StanzaDao.class)).orElse(null);
-	}
+    NumeroUscitoEntity entity = NumeroUscitoEntity.builder()
+        .id(entityKey)
+        .data(new Date())
+        .build();
 
-	@Override
-	public List<NumeroUscitoDao> getNumeriUsciti(String idStanza) {
-		List<NumeroUscitoDao> out = new ArrayList<>();
+    numeroUscitoRepository.save(entity);
+  }
 
-		Optional<StanzaEntity> stanzaEntityOptional = stanzaRepository.findById(idStanza);
+  @Override
+  public boolean existStanza(String idStanza) {
+    Optional<StanzaEntity> entityOptional = stanzaRepository.findById(idStanza);
 
-		stanzaEntityOptional.ifPresent(stanzaEntity -> {
-			if (!CollectionUtils.isEmpty(stanzaEntity.getNumeroUscitoList())) {
-				stanzaEntity.getNumeroUscitoList().forEach(numeroUscitoEntity -> out.add(new NumeroUscitoDao(stanzaEntity.getIdStanza(), numeroUscitoEntity.getId().getNumero(), numeroUscitoEntity.getData())));
-			}
-		});
+    return entityOptional.isPresent();
+  }
 
-		return out;
-	}
+  @Override
+  public List<String> getGiocatoriPresenti(String idStanza) {
+    List<String> out = new ArrayList<>();
 
-	@Override
-	public void saveNumeroEstratto(String idStanza, int numeroEstratto) {
-		NumeroUscitoEntityKey entityKey = new NumeroUscitoEntityKey();
-		entityKey.setStanza(new StanzaEntity(idStanza));
-		entityKey.setNumero(numeroEstratto);
+    Optional<StanzaEntity> stanzaEntityOptional = stanzaRepository.findById(idStanza);
 
-		NumeroUscitoEntity entity = new NumeroUscitoEntity();
-		entity.setId(entityKey);
-		entity.setData(new Date());
+    stanzaEntityOptional.ifPresent(stanzaEntity -> {
+      if (!CollectionUtils.isEmpty(stanzaEntity.getTabellaList())) {
+        stanzaEntity.getTabellaList()
+            .forEach(tabellaEntity -> out.add(tabellaEntity.getId().getIdTabella()));
+      }
+    });
 
-		numeroUscitoRepository.save(entity);
-	}
+    return out;
+  }
 
-	@Override
-	public boolean existStanza(String idStanza) {
-		Optional<StanzaEntity> entityOptional = stanzaRepository.findById(idStanza);
+  @Override
+  public List<StanzaDto> getAllStanza() {
+    List<StanzaDto> out = new ArrayList<>();
 
-		return entityOptional.isPresent();
-	}
+    Iterable<StanzaEntity> stanzaEntityIterable = stanzaRepository.findAll();
 
-	@Override
-	public List<String> getGiocatoriPresenti(String idStanza) {
-		List<String> out = new ArrayList<>();
+    stanzaEntityIterable.forEach(stanzaEntity -> {
+      StanzaDto temp = modelMapper.map(stanzaEntity, StanzaDto.class);
+      List<String> giocatoriPresenti = new ArrayList<>();
+      List<NumeroUscitoDto> numeroUscitoList = new ArrayList<>();
+      List<VincitaDto> vincitaList = new ArrayList<>();
 
-		Optional<StanzaEntity> stanzaEntityOptional = stanzaRepository.findById(idStanza);
+      if (!CollectionUtils.isEmpty(stanzaEntity.getTabellaList())) {
+        stanzaEntity.getTabellaList()
+            .forEach(tabellaEntity -> giocatoriPresenti.add(tabellaEntity.getId().getIdTabella()));
+      }
 
-		stanzaEntityOptional.ifPresent(stanzaEntity -> {
-			if (!CollectionUtils.isEmpty(stanzaEntity.getTabellaList())) {
-				stanzaEntity.getTabellaList().forEach(tabellaEntity -> out.add(tabellaEntity.getId().getIdTabella()));
-			}
-		});
+      if (!CollectionUtils.isEmpty(stanzaEntity.getNumeroUscitoList())) {
+        stanzaEntity.getNumeroUscitoList().forEach(numeroUscitoEntity -> numeroUscitoList.add(
+            new NumeroUscitoDto(stanzaEntity.getIdStanza(), numeroUscitoEntity.getId().getNumero(),
+                numeroUscitoEntity.getData())));
+      }
 
-		return out;
-	}
+      if (!CollectionUtils.isEmpty(stanzaEntity.getVincitaList())) {
+        stanzaEntity.getVincitaList().forEach(vincitaEntity -> vincitaList.add(
+            new VincitaDto(stanzaEntity.getIdStanza(), vincitaEntity.getId().getIdTabella(),
+                Objects.requireNonNull(
+                    PremioEnum.getEnumByCodice(vincitaEntity.getId().getPremio())))));
+      }
 
-	@Override
-	public List<StanzaDao> getAllStanza() {
-		List<StanzaDao> out = new ArrayList<>();
+      temp.setGiocatorePresenteList(giocatoriPresenti);
+      temp.setNumeroUscitoList(numeroUscitoList);
+      temp.setVincitaList(vincitaList);
 
-		Iterable<StanzaEntity> stanzaEntityIterable = stanzaRepository.findAll();
+      out.add(temp);
+    });
 
-		stanzaEntityIterable.forEach(stanzaEntity -> {
-			StanzaDao temp = modelMapper.map(stanzaEntity, StanzaDao.class);
-			List<String> giocatoriPresenti = new ArrayList<>();
-			List<NumeroUscitoDao> numeroUscitoList = new ArrayList<>();
-			List<VincitaDao> vincitaList = new ArrayList<>();
+    return out;
+  }
 
-			if (!CollectionUtils.isEmpty(stanzaEntity.getTabellaList())) {
-				stanzaEntity.getTabellaList().forEach(tabellaEntity -> giocatoriPresenti.add(tabellaEntity.getId().getIdTabella()));
-			}
+  @Override
+  public List<VincitaDto> getVincite(String idStanza) {
+    List<VincitaDto> out = new ArrayList<>();
 
-			if (!CollectionUtils.isEmpty(stanzaEntity.getNumeroUscitoList())) {
-				stanzaEntity.getNumeroUscitoList().forEach(numeroUscitoEntity -> numeroUscitoList.add(new NumeroUscitoDao(stanzaEntity.getIdStanza(), numeroUscitoEntity.getId().getNumero(), numeroUscitoEntity.getData())));
-			}
+    Optional<List<VincitaEntity>> vincitaEntityListOptional = vincitaRepository.findAllByIdStanzaIdStanza(
+        idStanza);
 
-			if (!CollectionUtils.isEmpty(stanzaEntity.getVincitaList())) {
-				stanzaEntity.getVincitaList().forEach(vincitaEntity -> vincitaList.add(new VincitaDao(stanzaEntity.getIdStanza(), vincitaEntity.getId().getIdTabella(), Objects.requireNonNull(PremioEnum.getEnumByCodice(vincitaEntity.getId().getPremio())))));
-			}
+    vincitaEntityListOptional.ifPresent(
+        vincitaEntityList -> vincitaEntityList.forEach(vincitaEntity -> {
+          VincitaDto temp = modelMapper.map(vincitaEntity, VincitaDto.class);
+          temp.setPremio(vincitaEntity.getId().getPremio());
+          temp.setNomePremio(PremioEnum.getValoreByCodice(temp.getPremio()));
 
-			temp.setGiocatorePresenteList(giocatoriPresenti);
-			temp.setNumeroUscitoList(numeroUscitoList);
-			temp.setVincitaList(vincitaList);
+          out.add(temp);
+        }));
 
-			out.add(temp);
-		});
+    return out;
+  }
 
-		return out;
-	}
+  @Override
+  public PremioEnum getPremioCorrente(String idStanza) {
+    Integer premio = vincitaRepository.findMaxPremio(idStanza);
 
-	@Override
-	public List<VincitaDao> getVincite(String idStanza) {
-		List<VincitaDao> out = new ArrayList<>();
+    if (premio == null) {
+      return PremioEnum.AMBO;
+    } else if (premio == 5) {
+      return null;
+    }
 
-		Optional<List<VincitaEntity>> vincitaEntityListOptional = vincitaRepository.findAllByIdStanzaIdStanza(idStanza);
+    return PremioEnum.getEnumByCodice(premio + 1);
+  }
 
-		vincitaEntityListOptional.ifPresent(vincitaEntityList -> vincitaEntityList.forEach(vincitaEntity -> {
-			VincitaDao temp = modelMapper.map(vincitaEntity, VincitaDao.class);
-			temp.setPremio(vincitaEntity.getId().getPremio());
-			temp.setNomePremio(PremioEnum.getValoreByCodice(temp.getPremio()));
+  @Override
+  public boolean existPremio(String idStanza, String idTabella, Integer idPremio) {
+    VincitaEntityKey entityKey = VincitaEntityKey.builder()
+        .stanza(new StanzaEntity(idStanza))
+        .idTabella(idTabella)
+        .premio(idPremio)
+        .build();
 
-			out.add(temp);
-		}));
+    Optional<VincitaEntity> entityOptional = vincitaRepository.findById(entityKey);
 
-		return out;
-	}
+    return entityOptional.isPresent();
+  }
 
-	@Override
-	public PremioEnum getPremioCorrente(String idStanza) {
-		Integer premio = vincitaRepository.findMaxPremio(idStanza);
+  @Override
+  public void savePremio(String idStanza, String idTabella, Integer idPremio) {
+    VincitaEntityKey entityKey = VincitaEntityKey.builder()
+        .stanza(new StanzaEntity(idStanza))
+        .idTabella(idTabella)
+        .premio(idPremio)
+        .build();
 
-		if (premio == null) {
-			return PremioEnum.AMBO;
-		} else if (premio == 5) {
-			return null;
-		}
+    VincitaEntity entity = VincitaEntity.builder()
+        .id(entityKey)
+        .build();
 
-		return PremioEnum.getEnumByCodice(premio + 1);
-	}
-
-	@Override
-	public boolean existPremio(String idStanza, String idTabella, Integer idPremio) {
-		VincitaEntityKey entityKey = new VincitaEntityKey();
-		entityKey.setStanza(new StanzaEntity(idStanza));
-		entityKey.setIdTabella(idTabella);
-		entityKey.setPremio(idPremio);
-
-		Optional<VincitaEntity> entityOptional = vincitaRepository.findById(entityKey);
-
-		return entityOptional.isPresent();
-	}
-
-	@Override
-	public void savePremio(String idStanza, String idTabella, Integer idPremio) {
-		VincitaEntityKey entityKey = new VincitaEntityKey();
-		entityKey.setStanza(new StanzaEntity(idStanza));
-		entityKey.setIdTabella(idTabella);
-		entityKey.setPremio(idPremio);
-
-		VincitaEntity entity = new VincitaEntity();
-		entity.setId(entityKey);
-
-		vincitaRepository.save(entity);
-	}
+    vincitaRepository.save(entity);
+  }
 }

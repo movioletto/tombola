@@ -1,42 +1,31 @@
 package it.movioletto.model;
 
-import javax.persistence.*;
 import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Embeddable
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class VincitaEntityKey implements Serializable {
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_stanza", nullable = false)
-	private StanzaEntity stanza;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_stanza", nullable = false)
+  private StanzaEntity stanza;
 
-	@Column(name = "premio")
-	private Integer premio;
+  @Column(name = "premio")
+  private Integer premio;
 
-	@Column(name = "id_tabella")
-	private String idTabella;
+  @Column(name = "id_tabella")
+  private String idTabella;
 
-	public StanzaEntity getStanza() {
-		return stanza;
-	}
-
-	public void setStanza(StanzaEntity stanza) {
-		this.stanza = stanza;
-	}
-
-	public Integer getPremio() {
-		return premio;
-	}
-
-	public void setPremio(Integer premio) {
-		this.premio = premio;
-	}
-
-	public String getIdTabella() {
-		return idTabella;
-	}
-
-	public void setIdTabella(String idTabella) {
-		this.idTabella = idTabella;
-	}
 }

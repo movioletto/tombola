@@ -1,7 +1,5 @@
-package it.movioletto.web.stats.data;
+package it.movioletto.dto;
 
-import it.movioletto.dto.StanzaDto;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StatsData {
+public class AnimaleDto {
 
-  private List<StanzaDto> stanzaList;
+  private Integer idAnimale;
+  private String nome;
+  private String genere;
 
 }

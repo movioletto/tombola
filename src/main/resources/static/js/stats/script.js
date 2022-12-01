@@ -1,3 +1,3 @@
 $(function () {
-	bindClickGiocatorePresente($('#url-giocatore-presente').val());
+  bindClickGiocatorePresente($('#url-giocatore-presente').val());
 });

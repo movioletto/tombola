@@ -1,31 +1,27 @@
 package it.movioletto.model;
 
-import javax.persistence.*;
 import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Table(name = "tabella")
 @Entity
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TabellaEntity implements Serializable {
 
-	@EmbeddedId
-	private TabellaEntityKey id;
+  @EmbeddedId
+  private TabellaEntityKey id;
 
-	@Column(name = "sequenza")
-	private String sequenza;
+  @Column(name = "sequenza")
+  private String sequenza;
 
-	public TabellaEntityKey getId() {
-		return id;
-	}
-
-	public void setId(TabellaEntityKey id) {
-		this.id = id;
-	}
-
-	public String getSequenza() {
-		return sequenza;
-	}
-
-	public void setSequenza(String sequenza) {
-		this.sequenza = sequenza;
-	}
 }
