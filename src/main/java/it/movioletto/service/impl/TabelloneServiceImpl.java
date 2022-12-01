@@ -201,7 +201,7 @@ public class TabelloneServiceImpl implements TabelloneService {
 
     if (premio == null) {
       return PremioEnum.AMBO;
-    } else if (premio == 5) {
+    } else if (premio == 6) {
       return null;
     }
 

@@ -8,7 +8,8 @@ public enum PremioEnum {
   TERNO(2, "Terno"),
   QUATERNA(3, "Quaterna"),
   CINQUINA(4, "Cinquina"),
-  TOMBOLA(5, "Tombola");
+  TOMBOLA(5, "Tombola"),
+  TOMBOLINO(6, "Tombolino");
 
   private final Integer codice;
   private final String valore;
