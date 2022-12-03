@@ -4,7 +4,7 @@ import it.movioletto.dto.TabellaDto;
 
 public interface CartellaService {
 
-  TabellaDto creaTabella(String idStanza);
+  TabellaDto creaTabella(String idStanza, String idTabella);
 
   boolean existTabella(String idTabella, String idStanza);
 

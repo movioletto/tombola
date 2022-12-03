@@ -74,11 +74,12 @@ public class TabelloneController {
       stanzaDto = tabelloneService.creaStanza(idTemp, StringUtils.abbreviate(nome, 200));
     }
 
-    return "redirect:/tabellone/stanza/" + stanzaDto.getIdStanza();
+    return "redirect:/tabellone/stanza/" + stanzaDto.getIdStanza() + "/custom";
   }
 
-  @GetMapping("/stanza/{idStanza}")
-  public String getTabellone(Model model, @PathVariable("idStanza") String idStanza) {
+  @GetMapping({"/stanza/{idStanza}", "/stanza/{idStanza}/{tipoPartita}"})
+  public String getTabellone(Model model, @PathVariable("idStanza") String idStanza,
+      @PathVariable(value = "tipoPartita", required = false) String tipoPartita) {
 
     if (!tabelloneService.existStanza(idStanza)) {
       return "redirect:/";
@@ -110,6 +111,8 @@ public class TabelloneController {
     data.setVincitaList(vincitaList);
     PremioEnum premioCorrente = tabelloneService.getPremioCorrente(idStanza);
     data.setPremioCorrente(premioCorrente);
+
+    data.setTipoPartita(tipoPartita);
 
     model.addAttribute("data", data);
 

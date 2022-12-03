@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -42,8 +43,12 @@ public class CartellaServiceImpl implements CartellaService {
   }
 
   @Override
-  public TabellaDto creaTabella(String idStanza) {
-    String idTabella = this.creaIdTabella(idStanza);
+  public TabellaDto creaTabella(String idStanza, String idTabella) {
+    if (StringUtils.isNotBlank(idTabella)) {
+      idTabella = this.controlloIdTabella(idTabella, idStanza);
+    } else {
+      idTabella = this.creaIdTabella(idStanza);
+    }
 
     String sequenza = this.creaSequenza(idStanza);
 
@@ -65,6 +70,27 @@ public class CartellaServiceImpl implements CartellaService {
     out.setSequenza(sequenza);
 
     return out;
+  }
+
+  private String controlloIdTabella(String idTabella, String idStanza) {
+    boolean nomeDuplicato = false;
+    int indice = 1;
+
+    idTabella = Arrays.stream(StringUtils.split(idTabella, " ")).map(StringUtils::capitalize)
+        .collect(Collectors.joining());
+
+    do {
+      if (nomeDuplicato) {
+        idTabella = StringUtils.abbreviate(idTabella, "",
+            50 - StringUtils.length(String.valueOf(indice)));
+        idTabella = StringUtils.join(idTabella, String.valueOf(indice++));
+      } else {
+        idTabella = StringUtils.abbreviate(idTabella, "", 50);
+        nomeDuplicato = true;
+      }
+    } while (this.existTabella(idTabella, idStanza));
+
+    return idTabella;
   }
 
   private String creaSequenza(String idStanza) {

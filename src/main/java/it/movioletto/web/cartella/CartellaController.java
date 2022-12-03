@@ -3,6 +3,7 @@ package it.movioletto.web.cartella;
 import it.movioletto.constant.PremioEnum;
 import it.movioletto.dto.MessaggioDto;
 import it.movioletto.dto.NumeroUscitoDto;
+import it.movioletto.dto.StanzaDto;
 import it.movioletto.dto.TabellaDto;
 import it.movioletto.service.CartellaService;
 import it.movioletto.service.TabelloneService;
@@ -42,7 +43,7 @@ public class CartellaController {
     if (!tabelloneService.existStanza(idStanza)) {
       return "redirect:/";
     }
-    TabellaDto tabellaDto = cartellaService.creaTabella(idStanza);
+    TabellaDto tabellaDto = cartellaService.creaTabella(idStanza, null);
 
     return "redirect:/cartella/stanza/" + tabellaDto.getIdStanza() + "/cartella/"
         + tabellaDto.getIdTabella();
@@ -53,10 +54,41 @@ public class CartellaController {
     if (!tabelloneService.existStanza(idStanza)) {
       return "redirect:/";
     }
-    TabellaDto tabellaDto = cartellaService.creaTabella(idStanza);
+    TabellaDto tabellaDto = cartellaService.creaTabella(idStanza, null);
 
     return "redirect:/cartella/stanza/" + tabellaDto.getIdStanza() + "/cartella/"
         + tabellaDto.getIdTabella();
+  }
+
+  @GetMapping("/custom")
+  public String getCustom() {
+    return "cartella/custom";
+  }
+
+  @PostMapping("/customAct")
+  public String getCustomActPost(String idStanza, String idTabella) {
+    if (!tabelloneService.existStanza(idStanza)) {
+      return "redirect:/";
+    }
+    TabellaDto tabellaDto = cartellaService.creaTabella(idStanza, idTabella);
+
+    return "redirect:/cartella/stanza/" + tabellaDto.getIdStanza() + "/cartella/"
+        + tabellaDto.getIdTabella();
+  }
+
+  @GetMapping("/custom/{idStanza}")
+  public String getCustomAct(Model model, @PathVariable("idStanza") String idStanza) {
+    if (!tabelloneService.existStanza(idStanza)) {
+      return "redirect:/";
+    }
+
+    CartellaData data = CartellaData.builder()
+        .stanza(StanzaDto.builder().idStanza(idStanza).build())
+        .build();
+
+    model.addAttribute("data", data);
+
+    return "cartella/custom";
   }
 
   @GetMapping("/stanza/{idStanza}/cartella/{idTabella}")

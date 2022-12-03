@@ -22,5 +22,6 @@ public class TabelloneData {
   private List<NumeroUscitoDto> numeroUscitoList;
   private List<VincitaDto> vincitaList;
   private PremioEnum premioCorrente;
+  private String tipoPartita;
 
 }
