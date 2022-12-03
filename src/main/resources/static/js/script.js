@@ -1,8 +1,18 @@
 $(function () {
 
   let linkStanza = $('#link-stanza');
-  linkStanza.html(window.location.protocol + "//" + window.location.hostname
+
+  let port = "";
+  if (window.location.port !== "") {
+    port = ":" + window.location.port;
+  }
+
+  linkStanza.html(
+      window.location.protocol + "//" + window.location.hostname + port
       + linkStanza.attr('href'));
+
+  new QRCode(document.getElementById("qrcode-partita"), linkStanza.text());
+  $('#qrcode-partita img').addClass("mx-auto");
 });
 
 var camelCaseInTestoNormale = function (string) {

@@ -10,6 +10,15 @@ $(function () {
 
   bindClickEstraiNumero(urlNumero);
 
+  let visualizzaQrcode = $('#visualizza-qrcode');
+  visualizzaQrcode.change(function () {
+    if ($(this).is(":checked")) {
+      $('#qrcode-partita').parent().removeClass("d-none");
+    } else {
+      $('#qrcode-partita').parent().addClass("d-none");
+    }
+  });
+
   let bindClickConfermaPremio = function (url) {
 
     $('#conferma-premio').unbind('click').bind('click', function () {

@@ -69,7 +69,7 @@
               </h5>
               <p class="card-testo">
                   <#if data.stanza.idStanza??>
-                      <#if data.tipoPartita == 'custom'>
+                      <#if data.tipoPartita?? && data.tipoPartita == 'custom'>
                         <a href="<@spring.url '/cartella/custom/${data.stanza.idStanza}' />"
                            id="link-stanza"></a>
                       <#else>
@@ -80,6 +80,20 @@
                       <@spring.message "nessun-dato.string" />
                   </#if>
               </p>
+            </div>
+            <div class="col-sm">
+              <h5 class="card-titolo">
+                <label for="visualizza-qrcode">
+                    <@spring.message "form.qrcode-partita" />
+                </label>
+              </h5>
+              <p class="card-testo">
+                <input id="visualizza-qrcode" type="checkbox" class="apple-switch">
+              </p>
+            </div>
+          </div>
+          <div class="row d-none">
+            <div class="col-sm" id="qrcode-partita">
             </div>
           </div>
         </div>
