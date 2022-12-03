@@ -10,13 +10,42 @@ $(function () {
 
   bindClickEstraiNumero(urlNumero);
 
-  let visualizzaQrcode = $('#visualizza-qrcode');
-  visualizzaQrcode.change(function () {
+  creaQrCode();
+
+  $('#visualizza-qrcode').change(function () {
     if ($(this).is(":checked")) {
       $('#qrcode-partita').parent().removeClass("d-none");
     } else {
       $('#qrcode-partita').parent().addClass("d-none");
     }
+  });
+
+  $('#modifica-url').bind('click', function () {
+    let urlCompleto = $('#link-stanza').attr("href");
+    let inizioUrl = urlCompleto.substring(0, urlCompleto.indexOf("/tombola"));
+    let fineUrl = urlCompleto.substring(urlCompleto.indexOf("/tombola"));
+
+    let inizioUlrHtml = `<input id="inizio-modifica-url" name="inizio-modifica-url" type="text" value="${inizioUrl}">`;
+    let fineUrlHtml = `<span id="fine-modifica-url">${fineUrl}</span>`;
+
+    $('#container-url').html(inizioUlrHtml + fineUrlHtml);
+
+    $(this).addClass('d-none');
+    $('#salva-url').removeClass('d-none');
+  });
+
+  $('#salva-url').bind('click', function () {
+    let inizioUrl = $('#inizio-modifica-url').val();
+    let fineUrl = $('#fine-modifica-url').text();
+
+    let a = `<a href="${inizioUrl}${fineUrl}" id="link-stanza">${inizioUrl}${fineUrl}</a>`;
+    $('#container-url').html(a);
+
+    $(this).addClass('d-none');
+    $('#modifica-url').removeClass('d-none');
+
+    $('#qrcode-partita').html("");
+    creaQrCode();
   });
 
   let bindClickConfermaPremio = function (url) {

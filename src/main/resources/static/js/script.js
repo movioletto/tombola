@@ -7,13 +7,18 @@ $(function () {
     port = ":" + window.location.port;
   }
 
-  linkStanza.html(
-      window.location.protocol + "//" + window.location.hostname + port
-      + linkStanza.attr('href'));
+  let linkFinale = window.location.protocol + "//" + window.location.hostname
+      + port + linkStanza.attr('href');
 
-  new QRCode(document.getElementById("qrcode-partita"), linkStanza.text());
-  $('#qrcode-partita img').addClass("mx-auto");
+  linkStanza.html(linkFinale);
+  linkStanza.attr('href', linkFinale);
 });
+
+let creaQrCode = function () {
+  new QRCode(document.getElementById("qrcode-partita"),
+      $('#link-stanza').text());
+  $('#qrcode-partita img').addClass("mx-auto");
+}
 
 var camelCaseInTestoNormale = function (string) {
   return string.replace(/([A-Z])/g, ' $1');

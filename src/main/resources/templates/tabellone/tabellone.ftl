@@ -68,6 +68,7 @@
                   <@spring.message "form.link-partita" />
               </h5>
               <p class="card-testo">
+                  <span id="container-url">
                   <#if data.stanza.idStanza??>
                       <#if data.tipoPartita?? && data.tipoPartita == 'custom'>
                         <a href="<@spring.url '/cartella/custom/${data.stanza.idStanza}' />"
@@ -79,6 +80,10 @@
                   <#else>
                       <@spring.message "nessun-dato.string" />
                   </#if>
+                  </span>
+                <a href="javascript:void(0)" id="modifica-url"><i class="far fa-edit"></i></a>
+                <a href="javascript:void(0)" id="salva-url" class="d-none"><i
+                      class="far fa-save"></i></a>
               </p>
             </div>
             <div class="col-sm">
