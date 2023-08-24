@@ -13,7 +13,7 @@ $(function () {
   let idTabella = $('#id-tabella').val();
 
   let abilitaSuoni = $('#abilitaSuoni');
-  abilitaSuoni.change(function() {
+  abilitaSuoni.change(function () {
     if ($(this).is(":checked")) {
       $("#numeroUscitoAudio")[0].play();
     }
@@ -41,6 +41,8 @@ $(function () {
   }
 
   let aggiornaPremio = function (data) {
+    let animaleList = $('#animale-list').val().split("|");
+
     let nessunPremioUscito = $('#nessun-premio-vinto');
     if (nessunPremioUscito.length !== 0) {
       nessunPremioUscito.remove();
@@ -49,6 +51,10 @@ $(function () {
     $('.lista-premi-vinti').append(
         '<strong class="badge bg-success ms-2">' + data.nomePremio
         + '</strong> ' + $('#separatore-premio-vinto').val()
+        + (isNomeAnimale(data.idTabella, animaleList)
+            ? '<img src="/tombola/resources/static/image/'
+            + nomeAnimaleDaNomeCartella(data.idTabella) + '.svg" alt="'
+            + nomeAnimaleDaNomeCartella(data.idTabella) + '" width="50px">' : '')
         + camelCaseInTestoNormale(data.idTabella));
 
     $.ajax({

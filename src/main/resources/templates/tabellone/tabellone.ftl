@@ -8,6 +8,7 @@
 <input type="hidden" id="separatore-premio-vinto"
        value="<@spring.message "separatore.premio-vinto" />">
 <input type="hidden" id="notifica-premio" value="<@spring.message "notifica-premio" />">
+<input type="hidden" id="animale-list" value="${data.animaleList?map(prova -> prova.nome)?join("|")}"/>
 
 <#if data?? && data.stanza?? && data.stanza.idStanza??>
   <input type="hidden" id="url-numero"
@@ -106,7 +107,7 @@
     </#if>
 
   <div id="premi-vinti" class="card">
-      <@layout.premiVinti data.vincitaList />
+      <@layout.premiVinti data.vincitaList data.animaleList?map(prova -> prova.nome)/>
   </div>
 
   <div id="numeri-usciti" class="card">
@@ -130,7 +131,7 @@
   </button>
 
   <div id="giocatori-presenti" class="card">
-      <@layout.giocatoriPresenti data.stanza.giocatorePresenteList data.stanza.idStanza/>
+      <@layout.giocatoriPresenti data.stanza.giocatorePresenteList data.stanza.idStanza data.animaleList?map(prova -> prova.nome)/>
   </div>
 
     <#include "../layout/footer.ftl" />

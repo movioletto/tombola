@@ -1,6 +1,7 @@
 package it.movioletto.web.tabellone.data;
 
 import it.movioletto.constant.PremioEnum;
+import it.movioletto.dto.AnimaleDto;
 import it.movioletto.dto.NumeroUscitoDto;
 import it.movioletto.dto.StanzaDto;
 import it.movioletto.dto.TabellaDto;
@@ -23,5 +24,6 @@ public class TabelloneData {
   private List<VincitaDto> vincitaList;
   private PremioEnum premioCorrente;
   private String tipoPartita;
+  private List<AnimaleDto> animaleList;
 
 }

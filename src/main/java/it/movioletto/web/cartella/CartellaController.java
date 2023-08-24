@@ -6,6 +6,7 @@ import it.movioletto.dto.NumeroUscitoDto;
 import it.movioletto.dto.StanzaDto;
 import it.movioletto.dto.TabellaDto;
 import it.movioletto.service.CartellaService;
+import it.movioletto.service.CommonService;
 import it.movioletto.service.TabelloneService;
 import it.movioletto.web.cartella.data.CartellaData;
 import java.util.List;
@@ -26,10 +27,14 @@ public class CartellaController {
 
   private final CartellaService cartellaService;
 
+  private final CommonService commonService;
+
   private final TabelloneService tabelloneService;
 
-  public CartellaController(CartellaService cartellaService, TabelloneService tabelloneService) {
+  public CartellaController(CartellaService cartellaService, CommonService commonService,
+      TabelloneService tabelloneService) {
     this.cartellaService = cartellaService;
+    this.commonService = commonService;
     this.tabelloneService = tabelloneService;
   }
 
@@ -107,6 +112,7 @@ public class CartellaController {
         .numeroUscitoList(numeriUsciti)
         .vincitaList(tabelloneService.getVincite(idStanza))
         .premioCorrente(tabelloneService.getPremioCorrente(idStanza))
+        .animaleList(commonService.findAllAnimale())
         .build();
 
     TabellaDto tabella = cartellaService.getTabella(idTabella, idStanza);

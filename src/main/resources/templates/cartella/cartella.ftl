@@ -14,6 +14,7 @@
        value="<@spring.message "separatore.premio-vinto" />">
 <input type="hidden" id="bottone-cartella-premio"
        value="<@spring.message "bottone.cartella.premio" />">
+<input type="hidden" id="animale-list" value="${data.animaleList?map(prova -> prova.nome)?join("|")}"/>
 
 <#if data?? && data.stanza?? && data.stanza.idStanza??>
   <input type="hidden" id="url-premio-corrente"
@@ -59,6 +60,9 @@
               </h5>
               <p class="card-testo">
                   <#if data.tabella.idTabella??>
+                      <#if utility.isNomeAnimale(data.tabella.idTabella, data.animaleList?map(prova -> prova.nome))>
+                        <img src="<@spring.url '/resources/static/image/' + utility.nomeAnimaleDaNomeGiocatore(data.tabella.idTabella) + '.svg' />" alt="${utility.nomeAnimaleDaNomeGiocatore(data.tabella.idTabella)}" width="50px">
+                      </#if>
                       ${utility.camelCaseInStringaNormale(data.tabella.idTabella)}
                   </#if>
               </p>
@@ -88,7 +92,7 @@
     </#if>
 
   <div id="premi-vinti" class="card">
-      <@layout.premiVinti data.vincitaList />
+      <@layout.premiVinti data.vincitaList data.animaleList?map(prova -> prova.nome)/>
   </div>
 
   <div id="numeri-usciti" class="card">

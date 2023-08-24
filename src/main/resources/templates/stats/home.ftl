@@ -6,6 +6,7 @@
 <body>
 
 <input type="hidden" id="url-giocatore-presente" value="<@spring.url '/tabellone/stanza/' />"/>
+<input type="hidden" id="animale-list" value="${data.animaleList?map(prova -> prova.nome)?join("|")}"/>
 
 <h1 class="titolo"><@spring.message "app.titolo" /></h1>
 <div class="container">
@@ -42,9 +43,9 @@
                       </#if>
                   </p>
                 </div>
-                  <@layout.premiVinti stanza.vincitaList />
+                  <@layout.premiVinti stanza.vincitaList data.animaleList?map(prova -> prova.nome)/>
 
-                  <@layout.giocatoriPresenti stanza.giocatorePresenteList stanza.idStanza/>
+                  <@layout.giocatoriPresenti stanza.giocatorePresenteList stanza.idStanza data.animaleList?map(prova -> prova.nome)/>
 
                   <@layout.numeriUsciti stanza.numeroUscitoList false />
               </div>

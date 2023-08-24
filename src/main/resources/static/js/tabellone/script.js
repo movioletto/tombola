@@ -49,6 +49,7 @@ $(function () {
   });
 
   let bindClickConfermaPremio = function (url) {
+    let animaleList = $('#animale-list').val().split("|");
 
     $('#conferma-premio').unbind('click').bind('click', function () {
       let idTabella = $(this).data('id-tabella');
@@ -74,6 +75,11 @@ $(function () {
           $('.lista-premi-vinti').append(
               '<strong class="badge bg-success ms-2">' + data.nomePremio
               + '</strong> ' + $('#separatore-premio-vinto').val()
+              + (isNomeAnimale(data.idTabella, animaleList)
+                  ? '<img src="/tombola/resources/static/image/'
+                  + nomeAnimaleDaNomeCartella(data.idTabella) + '.svg" alt="'
+                  + nomeAnimaleDaNomeCartella(data.idTabella) + '" width="50px">'
+                  : '')
               + camelCaseInTestoNormale(data.idTabella));
 
           stompClient.send('/partita/stanza/' + idStanza, {}, JSON.stringify({
@@ -89,6 +95,7 @@ $(function () {
   }
 
   let aggiornaGiocatori = function (data) {
+    let animaleList = $('#animale-list').val().split("|");
     let numeroGiocatori = $('#numero-giocatori');
 
     if (Number.isInteger(parseInt(numeroGiocatori.html()))) {
@@ -107,6 +114,10 @@ $(function () {
           '<span id="giocatore-' + data.idTabella
           + '" class="giocatore-presente btn btn-primary" data-giocatore="'
           + data.idTabella + '" data-stanza="' + idStanza + '">'
+          + (isNomeAnimale(data.idTabella, animaleList)
+              ? '<img src="/tombola/resources/static/image/'
+              + nomeAnimaleDaNomeCartella(data.idTabella) + '.svg" alt="'
+              + nomeAnimaleDaNomeCartella(data.idTabella) + '" width="50px">' : '')
           + camelCaseInTestoNormale(data.idTabella) + '</span>');
     }
 

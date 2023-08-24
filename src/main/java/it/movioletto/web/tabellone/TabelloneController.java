@@ -6,6 +6,7 @@ import it.movioletto.dto.NumeroUscitoDto;
 import it.movioletto.dto.StanzaDto;
 import it.movioletto.dto.TabellaDto;
 import it.movioletto.dto.VincitaDto;
+import it.movioletto.service.CommonService;
 import it.movioletto.service.TabelloneService;
 import it.movioletto.web.tabellone.data.TabelloneData;
 import java.util.ArrayList;
@@ -27,8 +28,11 @@ public class TabelloneController {
 
   private final TabelloneService tabelloneService;
 
-  public TabelloneController(TabelloneService tabelloneService) {
+  private final CommonService commonService;
+
+  public TabelloneController(TabelloneService tabelloneService, CommonService commonService) {
     this.tabelloneService = tabelloneService;
+    this.commonService = commonService;
   }
 
   @GetMapping("/new")
@@ -113,6 +117,7 @@ public class TabelloneController {
     data.setPremioCorrente(premioCorrente);
 
     data.setTipoPartita(tipoPartita);
+    data.setAnimaleList(commonService.findAllAnimale());
 
     model.addAttribute("data", data);
 

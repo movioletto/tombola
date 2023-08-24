@@ -1,4 +1,4 @@
-<#macro premiVinti vincitaList>
+<#macro premiVinti vincitaList animaleList>
   <div class="card-body">
     <h5 class="card-title">
         <@spring.message "form.premi-vinti"/>
@@ -11,6 +11,9 @@
                       ${vincita.nomePremio}
                   </strong>
                     <@spring.message "separatore.premio-vinto" />
+                    <#if utility.isNomeAnimale(vincita.idTabella, animaleList)>
+                      <img src="<@spring.url '/resources/static/image/' + utility.nomeAnimaleDaNomeGiocatore(vincita.idTabella) + '.svg' />" alt="${utility.nomeAnimaleDaNomeGiocatore(vincita.idTabella)}" width="50px">
+                    </#if>
                     ${utility.camelCaseInStringaNormale(vincita.idTabella)}
                 </#if>
             </#list>
@@ -72,7 +75,7 @@
   </div>
 </#macro>
 
-<#macro giocatoriPresenti giocatorePresenteList idStanza>
+<#macro giocatoriPresenti giocatorePresenteList idStanza animaleList>
   <div class="card-body">
     <h5 class="card-title">
         <@spring.message "form.giocatori-presenti" />
@@ -84,8 +87,11 @@
                   <span id="giocatore-${giocatorePresente}"
                         class="giocatore-presente btn btn-primary"
                         data-giocatore="${giocatorePresente}" data-stanza="${idStanza}">
-							${utility.camelCaseInStringaNormale(giocatorePresente)}
-						</span>
+                    <#if utility.isNomeAnimale(giocatorePresente, animaleList)>
+                      <img src="<@spring.url '/resources/static/image/' + utility.nomeAnimaleDaNomeGiocatore(giocatorePresente) + '.svg' />" alt="${utility.nomeAnimaleDaNomeGiocatore(giocatorePresente)}" width="50px">
+                    </#if>
+							      ${utility.camelCaseInStringaNormale(giocatorePresente)}
+						      </span>
                 </#if>
             </#list>
         <#else>
