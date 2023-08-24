@@ -12,6 +12,13 @@ $(function () {
   let idStanza = $('#id-stanza').val();
   let idTabella = $('#id-tabella').val();
 
+  let abilitaSuoni = $('#abilitaSuoni');
+  abilitaSuoni.change(function() {
+    if ($(this).is(":checked")) {
+      $("#numeroUscitoAudio")[0].play();
+    }
+  });
+
   let autoSelezione = $('#auto-selezione');
   autoSelezione.change(function () {
     if ($(this).is(":checked")) {
@@ -26,6 +33,7 @@ $(function () {
 
   let aggiornaNumeriUsciti = function (data) {
     disegnaNumeriUsciti(data);
+    suonaNuovoNumero();
 
     if (autoSelezione.is(":checked")) {
       $('#numero-' + data.numeroUscito).addClass('numero-uscito-tabella');
@@ -64,6 +72,13 @@ $(function () {
       }
     });
 
+  }
+
+  let suonaNuovoNumero = function () {
+    if (abilitaSuoni.is(":checked")) {
+      const audioPlayer = $("#numeroUscitoAudio")[0];
+      audioPlayer.play();
+    }
   }
 
   let socket = new SockJS('/tombola/stanza');

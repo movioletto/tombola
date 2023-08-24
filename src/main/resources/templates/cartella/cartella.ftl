@@ -4,7 +4,12 @@
 <script type="text/javascript"
         src="<@spring.url '/resources/static/js/cartella/script.js' />"></script>
 <body>
-x
+
+<audio controls id="numeroUscitoAudio" style="display: none;">
+  <source src="<@spring.url '/resources/static/audio/numeroUscito.wav' />" type="audio/wav">
+  Il tuo browser non supporta l'elemento audio.
+</audio>
+
 <input type="hidden" id="separatore-premio-vinto"
        value="<@spring.message "separatore.premio-vinto" />">
 <input type="hidden" id="bottone-cartella-premio"
@@ -66,6 +71,15 @@ x
               </h5>
               <p class="card-testo">
                 <input id="auto-selezione" type="checkbox" class="apple-switch">
+              </p>
+              <br>
+              <h5 class="card-titolo">
+                <label for="abilitaSuoni">
+                    <@spring.message "form.abilita-suoni" />
+                </label>
+              </h5>
+              <p class="card-testo">
+                <input id="abilitaSuoni" type="checkbox" class="apple-switch">
               </p>
             </div>
           </div>
