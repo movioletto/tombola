@@ -13,9 +13,9 @@
               <label for="idStanza" class="form-label"><@spring.message "form.id-partita" /></label>
             </div>
             <div class="mb-3">
-                <#if data?? && data.stanza?? && data.stanza.idStanza??>
+                <#if data?? && data.stanza?? && data.stanza.codice??>
                   <input id="idStanza" name="idStanza" type="text" class="form-control"
-                         maxlength="10" value="${data.stanza.idStanza}" readonly required>
+                         maxlength="10" value="${data.stanza.codice}" readonly required>
                 <#else>
                   <input id="idStanza" name="idStanza" type="text" class="form-control"
                          maxlength="10" required>

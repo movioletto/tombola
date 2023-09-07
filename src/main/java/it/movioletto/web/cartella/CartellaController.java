@@ -9,16 +9,21 @@ import it.movioletto.service.CartellaService;
 import it.movioletto.service.CommonService;
 import it.movioletto.service.TabelloneService;
 import it.movioletto.web.cartella.data.CartellaData;
+import it.movioletto.web.cartella.data.CartellaNewData;
 import java.util.List;
 import lombok.extern.java.Log;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/cartella")
@@ -44,25 +49,70 @@ public class CartellaController {
   }
 
   @PostMapping("/newAct")
-  public String getNewActPost(String idStanza) {
-    if (!tabelloneService.existStanza(idStanza)) {
+  public String getNewActPost(TabellaDto dto, RedirectAttributes redirectAttributes) {
+    StanzaDto stanza = commonService.getStanza(dto.getCodiceStanza());
+
+    if (stanza == null) {
       return "redirect:/";
     }
-    TabellaDto tabellaDto = cartellaService.creaTabella(idStanza, null);
 
-    return "redirect:/cartella/stanza/" + tabellaDto.getIdStanza() + "/cartella/"
+    if (BooleanUtils.isTrue(stanza.getOpzioniStanza().getNomiTabellaCustom())
+        && StringUtils.isBlank(dto.getNome())) {
+      redirectAttributes.addFlashAttribute("dto", dto);
+
+      return "redirect:/cartella/new/redirect";
+    }
+
+    dto.setIdStanza(stanza.getIdStanza());
+    TabellaDto tabellaDto = cartellaService.creaTabella(dto);
+
+    return "redirect:/cartella/stanza/" + tabellaDto.getCodiceStanza() + "/cartella/"
         + tabellaDto.getIdTabella();
   }
 
-  @GetMapping("/new/{idStanza}")
-  public String getNewAct(@PathVariable("idStanza") String idStanza) {
-    if (!tabelloneService.existStanza(idStanza)) {
+  @GetMapping("/new/{codiceStanza}")
+  public String getNewAct(@PathVariable("codiceStanza") String codiceStanza, TabellaDto dto,
+      RedirectAttributes redirectAttributes) {
+    StanzaDto stanza = commonService.getStanza(codiceStanza);
+
+    if (stanza == null) {
       return "redirect:/";
     }
-    TabellaDto tabellaDto = cartellaService.creaTabella(idStanza, null);
 
-    return "redirect:/cartella/stanza/" + tabellaDto.getIdStanza() + "/cartella/"
+    if (BooleanUtils.isTrue(stanza.getOpzioniStanza().getNomiTabellaCustom())
+        && StringUtils.isBlank(dto.getNome())) {
+      if (StringUtils.isBlank(dto.getCodiceStanza())) {
+        dto.setCodiceStanza(codiceStanza);
+      }
+
+      redirectAttributes.addFlashAttribute("dto", dto);
+
+      return "redirect:/cartella/new/redirect";
+    }
+
+    dto.setIdStanza(stanza.getIdStanza());
+    TabellaDto tabellaDto = cartellaService.creaTabella(dto);
+
+    return "redirect:/cartella/stanza/" + tabellaDto.getCodiceStanza() + "/cartella/"
         + tabellaDto.getIdTabella();
+  }
+
+  @GetMapping("/new/redirect")
+  public String getNewRedirect(Model model, @ModelAttribute("dto") TabellaDto dto) {
+    StanzaDto stanza = commonService.getStanza(dto.getCodiceStanza());
+
+    if (stanza == null) {
+      return "redirect:/";
+    }
+
+    CartellaNewData data = CartellaNewData.builder()
+        .tabella(dto)
+        .opzioniStanza(stanza.getOpzioniStanza())
+        .build();
+
+    model.addAttribute("data", data);
+
+    return "cartella/new";
   }
 
   @GetMapping("/custom")
@@ -71,24 +121,27 @@ public class CartellaController {
   }
 
   @PostMapping("/customAct")
-  public String getCustomActPost(String idStanza, String idTabella) {
-    if (!tabelloneService.existStanza(idStanza)) {
+  public String getCustomActPost(TabellaDto dto) {
+    StanzaDto stanza = commonService.getStanza(dto.getCodiceStanza());
+
+    if (stanza == null) {
       return "redirect:/";
     }
-    TabellaDto tabellaDto = cartellaService.creaTabella(idStanza, idTabella);
+    dto.setIdStanza(stanza.getIdStanza());
+    TabellaDto tabellaDto = cartellaService.creaTabella(dto);
 
-    return "redirect:/cartella/stanza/" + tabellaDto.getIdStanza() + "/cartella/"
+    return "redirect:/cartella/stanza/" + tabellaDto.getCodiceStanza() + "/cartella/"
         + tabellaDto.getIdTabella();
   }
 
-  @GetMapping("/custom/{idStanza}")
-  public String getCustomAct(Model model, @PathVariable("idStanza") String idStanza) {
-    if (!tabelloneService.existStanza(idStanza)) {
+  @GetMapping("/custom/{codiceStanza}")
+  public String getCustomAct(Model model, @PathVariable("codiceStanza") String codiceStanza) {
+    if (!tabelloneService.existStanzaByCodice(codiceStanza)) {
       return "redirect:/";
     }
 
     CartellaData data = CartellaData.builder()
-        .stanza(StanzaDto.builder().idStanza(idStanza).build())
+        .stanza(StanzaDto.builder().codice(codiceStanza).build())
         .build();
 
     model.addAttribute("data", data);
@@ -96,23 +149,24 @@ public class CartellaController {
     return "cartella/custom";
   }
 
-  @GetMapping("/stanza/{idStanza}/cartella/{idTabella}")
-  public String getTabella(Model model, @PathVariable("idStanza") String idStanza,
-      @PathVariable("idTabella") String idTabella) {
+  @GetMapping("/stanza/{codiceStanza}/cartella/{idTabella}")
+  public String getTabella(Model model, @PathVariable("codiceStanza") String codiceStanza,
+      @PathVariable("idTabella") Integer idTabella) {
+    StanzaDto stanza = commonService.getStanza(codiceStanza);
 
-    if (!tabelloneService.existStanza(idStanza) || !cartellaService.existTabella(idTabella,
-        idStanza)) {
+    if (stanza == null || cartellaService.isNotExistTabella(idTabella, stanza.getIdStanza())) {
       return "redirect:/";
     }
+    Integer idStanza = stanza.getIdStanza();
 
     List<NumeroUscitoDto> numeriUsciti = tabelloneService.getNumeriUsciti(idStanza);
 
     CartellaData data = CartellaData.builder()
-        .stanza(tabelloneService.getStanza(idStanza))
+        .stanza(stanza)
         .numeroUscitoList(numeriUsciti)
-        .vincitaList(tabelloneService.getVincite(idStanza))
-        .premioCorrente(tabelloneService.getPremioCorrente(idStanza))
-        .animaleList(commonService.findAllAnimale())
+        //TODO mettere il nome del premio preso dalla tabella
+        .vincitaList(tabelloneService.getVincite(idStanza, stanza.getOpzioniStanza()))
+        .premioCorrente(tabelloneService.getPremioCorrente(idStanza, stanza.getOpzioniStanza()))
         .build();
 
     TabellaDto tabella = cartellaService.getTabella(idTabella, idStanza);

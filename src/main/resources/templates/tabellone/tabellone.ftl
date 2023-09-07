@@ -8,16 +8,15 @@
 <input type="hidden" id="separatore-premio-vinto"
        value="<@spring.message "separatore.premio-vinto" />">
 <input type="hidden" id="notifica-premio" value="<@spring.message "notifica-premio" />">
-<input type="hidden" id="animale-list" value="${data.animaleList?map(prova -> prova.nome)?join("|")}"/>
 
-<#if data?? && data.stanza?? && data.stanza.idStanza??>
+<#if data?? && data.stanza?? && data.stanza.codice??>
   <input type="hidden" id="url-numero"
-         value="<@spring.url '/tabellone/stanza/${data.stanza.idStanza}/numero' />">
+         value="<@spring.url '/tabellone/stanza/${data.stanza.codice}/numero' />">
   <input type="hidden" id="url-giocatore" value="<@spring.url '/tabellone/stanza/' />">
   <input type="hidden" id="url-premio"
-         value="<@spring.url '/tabellone/stanza/${data.stanza.idStanza}/premio/' />">
+         value="<@spring.url '/tabellone/stanza/${data.stanza.codice}/premio/' />">
 
-  <input type="hidden" id="id-stanza" value="${data.stanza.idStanza}">
+  <input type="hidden" id="id-stanza" value="${data.stanza.codice}">
 </#if>
 
 <h1 class="titolo"><@spring.message "app.titolo" /></h1>
@@ -55,8 +54,8 @@
                   <@spring.message "form.id-partita" />
               </h5>
               <p class="card-testo">
-                  <#if data.stanza.idStanza??>
-                      ${data.stanza.idStanza}
+                  <#if data.stanza.codice??>
+                      ${data.stanza.codice}
                   <#else>
                       <@spring.message "nessun-dato.string" />
                   </#if>
@@ -70,12 +69,12 @@
               </h5>
               <p class="card-testo">
                   <span id="container-url">
-                  <#if data.stanza.idStanza??>
+                  <#if data.stanza.codice??>
                       <#if data.tipoPartita?? && data.tipoPartita == 'custom'>
-                        <a href="<@spring.url '/cartella/custom/${data.stanza.idStanza}' />"
+                        <a href="<@spring.url '/cartella/custom/${data.stanza.codice}' />"
                            id="link-stanza"></a>
                       <#else>
-                        <a href="<@spring.url '/cartella/new/${data.stanza.idStanza}' />"
+                        <a href="<@spring.url '/cartella/new/${data.stanza.codice}' />"
                            id="link-stanza"></a>
                       </#if>
                   <#else>
@@ -107,7 +106,7 @@
     </#if>
 
   <div id="premi-vinti" class="card">
-      <@layout.premiVinti data.vincitaList data.animaleList?map(prova -> prova.nome)/>
+      <@layout.premiVinti data.vincitaList/>
   </div>
 
   <div id="numeri-usciti" class="card">
@@ -131,7 +130,7 @@
   </button>
 
   <div id="giocatori-presenti" class="card">
-      <@layout.giocatoriPresenti data.stanza.giocatorePresenteList data.stanza.idStanza data.animaleList?map(prova -> prova.nome)/>
+      <@layout.giocatoriPresenti data.stanza.giocatorePresenteList data.stanza.codice/>
   </div>
 
     <#include "../layout/footer.ftl" />

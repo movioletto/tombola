@@ -49,8 +49,6 @@ $(function () {
   });
 
   let bindClickConfermaPremio = function (url) {
-    let animaleList = $('#animale-list').val().split("|");
-
     $('#conferma-premio').unbind('click').bind('click', function () {
       let idTabella = $(this).data('id-tabella');
       let idPremio = $(this).data('id-premio');
@@ -75,16 +73,21 @@ $(function () {
           $('.lista-premi-vinti').append(
               '<strong class="badge bg-success ms-2">' + data.nomePremio
               + '</strong> ' + $('#separatore-premio-vinto').val()
-              + (isNomeAnimale(data.idTabella, animaleList)
+              + (data.aggettivoTabella !== null && data.aggettivoTabella !== ""
+              && data.aggettivoTabella !== undefined
                   ? '<img src="/tombola/resources/static/image/'
-                  + nomeAnimaleDaNomeCartella(data.idTabella) + '.svg" alt="'
-                  + nomeAnimaleDaNomeCartella(data.idTabella) + '" width="50px">'
+                  + data.nomeTabella + '.svg" alt="' + data.nomeTabella
+                  + '" width="50px">'
                   : '')
-              + camelCaseInTestoNormale(data.idTabella));
+              + data.nomeTabella + ' ' + (data.aggettivoTabella !== null
+              && data.aggettivoTabella !== "" && data.aggettivoTabella !== undefined
+                  ? data.aggettivoTabella : ''));
 
           stompClient.send('/partita/stanza/' + idStanza, {}, JSON.stringify({
             'azione': data.azione,
             'idTabella': data.idTabella,
+            'nomeTabella': data.nomeTabella,
+            'aggettivoTabella': data.aggettivoTabella,
             'nomePremio': data.nomePremio,
             'idPremio': data.idPremio
           }));
@@ -95,13 +98,6 @@ $(function () {
   }
 
   let aggiornaGiocatori = function (data) {
-    let animaleList = $('#animale-list').val().split("|");
-    let numeroGiocatori = $('#numero-giocatori');
-
-    if (Number.isInteger(parseInt(numeroGiocatori.html()))) {
-      numeroGiocatori.html(parseInt(numeroGiocatori.html()) + 1);
-    }
-
     let objGiocatoriPresenti = $('#giocatori-presenti');
 
     if (objGiocatoriPresenti.find('#nessun-giocatore-presente').length !== 0) {
@@ -110,15 +106,29 @@ $(function () {
 
     if (objGiocatoriPresenti.find('#giocatore-' + data.idTabella).length
         === 0) {
+
+      let numeroGiocatori = $('#numero-giocatori');
+
+      if (Number.isInteger(parseInt(numeroGiocatori.html()))) {
+        numeroGiocatori.html(parseInt(numeroGiocatori.html()) + 1);
+      }
+
       $('.lista-giocatori-presenti').prepend(
           '<span id="giocatore-' + data.idTabella
           + '" class="giocatore-presente btn btn-primary" data-giocatore="'
-          + data.idTabella + '" data-stanza="' + idStanza + '">'
-          + (isNomeAnimale(data.idTabella, animaleList)
+          + data.idTabella + '" data-stanza="' + idStanza
+          + '" data-giocatore-nome="' + data.nomeTabella + '"'
+          + ' data-giocatore-aggettivo="' + (data.aggettivoTabella !== null
+          && data.aggettivoTabella !== "" && data.aggettivoTabella !== undefined
+              ? data.aggettivoTabella : '') + '">'
+          + (data.aggettivoTabella !== null && data.aggettivoTabella !== ""
+          && data.aggettivoTabella !== undefined
               ? '<img src="/tombola/resources/static/image/'
-              + nomeAnimaleDaNomeCartella(data.idTabella) + '.svg" alt="'
-              + nomeAnimaleDaNomeCartella(data.idTabella) + '" width="50px">' : '')
-          + camelCaseInTestoNormale(data.idTabella) + '</span>');
+              + data.nomeTabella + '.svg" alt="'
+              + data.nomeTabella + '" width="50px">' : '')
+          + data.nomeTabella + ' ' + (data.aggettivoTabella !== null
+          && data.aggettivoTabella !== "" && data.aggettivoTabella !== undefined
+              ? data.aggettivoTabella : '') + '</span>');
     }
 
     bindClickGiocatorePresente(urlGiocatore);

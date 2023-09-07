@@ -5,7 +5,6 @@ import it.movioletto.model.AggettivoEntity;
 import it.movioletto.model.AnimaleEntity;
 import it.movioletto.model.StanzaEntity;
 import it.movioletto.model.TabellaEntity;
-import it.movioletto.model.TabellaEntityKey;
 import it.movioletto.repository.AggettivoRepository;
 import it.movioletto.repository.AnimaleRepository;
 import it.movioletto.repository.TabellaRepository;
@@ -20,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -43,57 +41,56 @@ public class CartellaServiceImpl implements CartellaService {
   }
 
   @Override
-  public TabellaDto creaTabella(String idStanza, String idTabella) {
-    if (StringUtils.isNotBlank(idTabella)) {
-      idTabella = this.controlloIdTabella(idTabella, idStanza);
+  public TabellaDto creaTabella(TabellaDto dto) {
+    Integer idStanza = dto.getIdStanza();
+    TabellaDto tabellaDaCreare;
+    if (StringUtils.isNotBlank(dto.getNome())) {
+      tabellaDaCreare = this.controlloIdTabella(dto.getNome(), idStanza);
     } else {
-      idTabella = this.creaIdTabella(idStanza);
+      tabellaDaCreare = this.creaIdTabella(idStanza);
     }
 
     String sequenza = this.creaSequenza(idStanza);
 
-    TabellaEntityKey entityKey = TabellaEntityKey.builder()
-        .idTabella(idTabella)
-        .stanza(new StanzaEntity(idStanza))
-        .build();
-
     TabellaEntity entity = TabellaEntity.builder()
-        .id(entityKey)
+        .stanza(new StanzaEntity(idStanza))
+        .nome(tabellaDaCreare.getNome())
+        .aggettivo(tabellaDaCreare.getAggettivo())
         .sequenza(sequenza)
         .build();
 
-    tabellaRepository.save(entity);
+    entity = tabellaRepository.save(entity);
 
     TabellaDto out = new TabellaDto();
-    out.setIdTabella(idTabella);
+    out.setIdTabella(entity.getIdTabella());
     out.setIdStanza(idStanza);
+    out.setNome(entity.getNome());
+    out.setAggettivo(entity.getAggettivo());
+    out.setCodiceStanza(dto.getCodiceStanza());
     out.setSequenza(sequenza);
 
     return out;
   }
 
-  private String controlloIdTabella(String idTabella, String idStanza) {
+  private TabellaDto controlloIdTabella(String nome, Integer idStanza) {
     boolean nomeDuplicato = false;
     int indice = 1;
 
-    idTabella = Arrays.stream(StringUtils.split(idTabella, " ")).map(StringUtils::capitalize)
-        .collect(Collectors.joining());
-
     do {
       if (nomeDuplicato) {
-        idTabella = StringUtils.abbreviate(idTabella, "",
+        nome = StringUtils.abbreviate(nome, "",
             50 - StringUtils.length(String.valueOf(indice)));
-        idTabella = StringUtils.join(idTabella, String.valueOf(indice++));
+        nome = StringUtils.join(nome, String.valueOf(indice++));
       } else {
-        idTabella = StringUtils.abbreviate(idTabella, "", 50);
+        nome = StringUtils.abbreviate(nome, "", 50);
         nomeDuplicato = true;
       }
-    } while (this.existTabella(idTabella, idStanza));
+    } while (this.existTabella(nome, idStanza));
 
-    return idTabella;
+    return TabellaDto.builder().nome(nome).build();
   }
 
-  private String creaSequenza(String idStanza) {
+  private String creaSequenza(Integer idStanza) {
     int numeroNumeri = 90;
 
     StringBuilder sequenza;
@@ -160,12 +157,12 @@ public class CartellaServiceImpl implements CartellaService {
 
           int riga1 = totaleRigaMap.entrySet().stream()
               .filter(entry -> ordineValore.get(0).equals(entry.getValue()))
-              .map(Map.Entry::getKey).findFirst().get();
+              .map(Map.Entry::getKey).findFirst().orElse(0);
           int finalRiga = riga1;
           int riga2 = totaleRigaMap.entrySet().stream()
               .filter(entry -> ordineValore.get(1).equals(entry.getValue())
                   && finalRiga != entry.getKey())
-              .map(Map.Entry::getKey).findFirst().get();
+              .map(Map.Entry::getKey).findFirst().orElse(0);
 
           if (riga1 > riga2) {
             int temp = riga2;
@@ -201,11 +198,12 @@ public class CartellaServiceImpl implements CartellaService {
     return sequenza.toString();
   }
 
-  private String creaIdTabella(String idStanza) {
+  private TabellaDto creaIdTabella(Integer idStanza) {
     int numeroAnimali = (int) animaleRepository.count();
     int numeroAggettivi = (int) aggettivoRepository.count();
 
-    String idTabella;
+    String nomeTabella;
+    String aggettivoTabella;
     do {
       Optional<AnimaleEntity> animale = animaleRepository.findById(
           randomAnimale.nextInt(numeroAnimali) + 1);
@@ -223,26 +221,31 @@ public class CartellaServiceImpl implements CartellaService {
         }
       }
 
-      idTabella = StringUtils.capitalize(nomeAnimale) + StringUtils.capitalize(nomeAggettivo);
-    } while (this.existTabella(idTabella, idStanza));
+      nomeTabella = StringUtils.capitalize(nomeAnimale);
+      aggettivoTabella = StringUtils.capitalize(nomeAggettivo);
+    } while (this.existTabella(nomeTabella, aggettivoTabella, idStanza));
 
-    return idTabella;
+    return TabellaDto.builder().nome(nomeTabella).aggettivo(aggettivoTabella).build();
   }
 
   @Override
-  public boolean existTabella(String idTabella, String idStanza) {
-    TabellaEntityKey entityKey = TabellaEntityKey.builder()
-        .idTabella(idTabella)
-        .stanza(new StanzaEntity(idStanza))
-        .build();
-
-    Optional<TabellaEntity> entityOptional = tabellaRepository.findById(entityKey);
-
-    return entityOptional.isPresent();
+  public boolean isNotExistTabella(Integer idTabella, Integer idStanza) {
+    return tabellaRepository.findByIdTabellaAndIdStanza(idTabella, idStanza).isEmpty();
   }
 
   @Override
-  public boolean existSequenza(String sequenza, String idStanza) {
+  public boolean existTabella(String nome, Integer idStanza) {
+    return tabellaRepository.findByNomeTabellaAndIdStanza(nome, idStanza).isPresent();
+  }
+
+  @Override
+  public boolean existTabella(String nome, String aggettivo, Integer idStanza) {
+    return tabellaRepository.findByNomeAggettivoTabellaAndIdStanza(nome, aggettivo, idStanza)
+        .isPresent();
+  }
+
+  @Override
+  public boolean existSequenza(String sequenza, Integer idStanza) {
     Optional<TabellaEntity> entityOptional = tabellaRepository.findSequenzaStanza(sequenza,
         idStanza);
 
@@ -250,20 +253,18 @@ public class CartellaServiceImpl implements CartellaService {
   }
 
   @Override
-  public TabellaDto getTabella(String idTabella, String idStanza) {
+  public TabellaDto getTabella(Integer idTabella, Integer idStanza) {
     TabellaDto out = null;
 
-    TabellaEntityKey entityKey = TabellaEntityKey.builder()
-        .idTabella(idTabella)
-        .stanza(new StanzaEntity(idStanza))
-        .build();
-
-    Optional<TabellaEntity> entity = tabellaRepository.findById(entityKey);
+    Optional<TabellaEntity> entity = tabellaRepository.findByIdTabellaAndIdStanza(idTabella,
+        idStanza);
 
     if (entity.isPresent()) {
       out = new TabellaDto();
       out.setIdTabella(idTabella);
       out.setIdStanza(idStanza);
+      out.setNome(entity.get().getNome());
+      out.setAggettivo(entity.get().getAggettivo());
       out.setSequenza(entity.get().getSequenza());
     }
 

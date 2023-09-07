@@ -3,25 +3,30 @@ package it.movioletto.dto;
 import it.movioletto.constant.PremioEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class VincitaDto {
 
-  private String idStanza;
+  private Integer idVincita;
+  private Integer idStanza;
   private Integer premio;
   private String nomePremio;
-  private String idTabella;
+  private TabellaDto tabella;
 
-  public VincitaDto(String idStanza, String idTabella, PremioEnum premioEnum) {
+  public VincitaDto(Integer idVincita, Integer idStanza, TabellaDto tabella,
+      PremioEnum premioEnum) {
+    this.idVincita = idVincita;
     this.idStanza = idStanza;
     this.premio = premioEnum.getCodice();
     this.nomePremio = premioEnum.getValore();
-    this.idTabella = idTabella;
+    this.tabella = tabella;
   }
 
 }

@@ -20,50 +20,13 @@ let creaQrCode = function () {
   $('#qrcode-partita img').addClass("mx-auto");
 }
 
-var camelCaseInTestoNormale = function (string) {
-  return string.replace(/([A-Z])/g, ' $1');
-}
-
-var testoNormaleInCamelCase = function (string) {
-  return string.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g,
-      (match, chr) => chr.toUpperCase());
-}
-
-var nomeAnimaleDaNomeCartella = function (string) {
-  let nomeAnimale = camelCaseInTestoNormale(string);
-  return testoNormaleInCamelCase(
-      nomeAnimale.substring(0, nomeAnimale.lastIndexOf(" ")));
-}
-
-var almenoUnaLetteraUppercase = function (inputString) {
-  for (let i = 0; i < inputString.length; i++) {
-    if (inputString[i] === inputString[i].toUpperCase() && inputString[i]
-        !== inputString[i].toLowerCase()) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function lowercaseFirstLetter(word) {
-  return word.charAt(0).toLowerCase() + word.slice(1);
-}
-
-var isNomeAnimale = function (string, animaleList) {
-  string = lowercaseFirstLetter(string);
-  if (almenoUnaLetteraUppercase(string) > 0 && animaleList.length > 0) {
-    return animaleList.includes(nomeAnimaleDaNomeCartella(string));
-  }
-  return false;
-}
-
 var bindClickGiocatorePresente = function (url) {
-
-  let animaleList = $('#animale-list').val().split("|");
 
   $('.giocatore-presente').unbind('click').bind('click', function () {
     let idTabella = $(this).data('giocatore');
     let idStanza = $(this).data('stanza');
+    let nomeTabella = $(this).data('giocatore-nome');
+    let aggettivoTabella = $(this).data('giocatore-aggettivo');
     let giocatorePresente = $(this);
 
     $.ajax({
@@ -75,11 +38,13 @@ var bindClickGiocatorePresente = function (url) {
 
         cartellaGiocatorePresente.find('.card-title').find(
             '.id-cartella-giocatore-presente').html(
-            (isNomeAnimale(idTabella, animaleList)
-                ? '<img src="/tombola/resources/static/image/'
-                + nomeAnimaleDaNomeCartella(idTabella) + '.svg" alt="'
-                + nomeAnimaleDaNomeCartella(idTabella) + '" width="50px">' : '')
-            + camelCaseInTestoNormale(idTabella));
+            (aggettivoTabella !== null && aggettivoTabella !== ""
+            && aggettivoTabella !== undefined
+                ? '<img src="/tombola/resources/static/image/' + nomeTabella
+                + '.svg" alt="' + nomeTabella + '" width="50px">' : '')
+            + nomeTabella + ' ' + (aggettivoTabella !== null && aggettivoTabella
+            !== "" && aggettivoTabella !== undefined
+                ? aggettivoTabella : ''));
 
         let confermaPremio = $('#conferma-premio');
         if ($('#giocatore-' + idTabella).find('.badge').length !== 0) {

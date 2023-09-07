@@ -4,18 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class TabellaDto {
 
-  private String idTabella;
-  private String idStanza;
+  private Integer idTabella;
+  private Integer idStanza;
+  private String codiceStanza;
+  private String nome;
+  private String aggettivo;
   private List<List<NumeroDto>> sequenza;
 
   public TabellaDto(String sequenza) {

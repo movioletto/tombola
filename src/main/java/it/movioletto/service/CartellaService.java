@@ -4,11 +4,15 @@ import it.movioletto.dto.TabellaDto;
 
 public interface CartellaService {
 
-  TabellaDto creaTabella(String idStanza, String idTabella);
+  TabellaDto creaTabella(TabellaDto dto);
 
-  boolean existTabella(String idTabella, String idStanza);
+  boolean isNotExistTabella(Integer idTabella, Integer idStanza);
 
-  boolean existSequenza(String sequenza, String idStanza);
+  boolean existTabella(String nome, Integer idStanza);
 
-  TabellaDto getTabella(String idTabella, String idStanza);
+  boolean existTabella(String nome, String aggettivo, Integer idStanza);
+
+  boolean existSequenza(String sequenza, Integer idStanza);
+
+  TabellaDto getTabella(Integer idTabella, Integer idStanza);
 }

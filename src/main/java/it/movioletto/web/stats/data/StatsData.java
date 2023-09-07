@@ -1,6 +1,5 @@
 package it.movioletto.web.stats.data;
 
-import it.movioletto.dto.AnimaleDto;
 import it.movioletto.dto.StanzaDto;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -15,6 +14,4 @@ import lombok.NoArgsConstructor;
 public class StatsData {
 
   private List<StanzaDto> stanzaList;
-  private List<AnimaleDto> animaleList;
-
 }

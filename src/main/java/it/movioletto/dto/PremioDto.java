@@ -11,14 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NumeroDto {
+public class PremioDto {
 
-  private Integer numero;
-  private Boolean uscito;
-
-  public NumeroDto(Integer numero) {
-    this.numero = numero;
-    this.uscito = false;
-  }
-
+  private Integer codice;
+  private String valore;
 }

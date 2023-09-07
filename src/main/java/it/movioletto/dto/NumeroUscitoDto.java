@@ -3,17 +3,19 @@ package it.movioletto.dto;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class NumeroUscitoDto {
 
-  private String idStanza;
+  private Integer idNumeroUscito;
+  private Integer idStanza;
   private Integer numero;
   private Date data;
 

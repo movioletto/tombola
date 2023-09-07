@@ -11,6 +11,8 @@ $(function () {
   let urlPremio = $('#url-premio-corrente').val();
   let idStanza = $('#id-stanza').val();
   let idTabella = $('#id-tabella').val();
+  let nomeTabella = $('#nome-tabella').val();
+  let aggettivoTabella = $('#aggettivo-tabella').val();
 
   let abilitaSuoni = $('#abilitaSuoni');
   abilitaSuoni.change(function () {
@@ -41,8 +43,6 @@ $(function () {
   }
 
   let aggiornaPremio = function (data) {
-    let animaleList = $('#animale-list').val().split("|");
-
     let nessunPremioUscito = $('#nessun-premio-vinto');
     if (nessunPremioUscito.length !== 0) {
       nessunPremioUscito.remove();
@@ -51,11 +51,14 @@ $(function () {
     $('.lista-premi-vinti').append(
         '<strong class="badge bg-success ms-2">' + data.nomePremio
         + '</strong> ' + $('#separatore-premio-vinto').val()
-        + (isNomeAnimale(data.idTabella, animaleList)
+        + (data.aggettivoTabella !== null && data.aggettivoTabella !== ""
+        && data.aggettivoTabella !== undefined
             ? '<img src="/tombola/resources/static/image/'
-            + nomeAnimaleDaNomeCartella(data.idTabella) + '.svg" alt="'
-            + nomeAnimaleDaNomeCartella(data.idTabella) + '" width="50px">' : '')
-        + camelCaseInTestoNormale(data.idTabella));
+            + data.nomeTabella + '.svg" alt="' + data.nomeTabella
+            + '" width="50px">' : '')
+        + data.nomeTabella + ' ' + (data.aggettivoTabella !== null
+        && data.aggettivoTabella !== "" && data.aggettivoTabella !== undefined ?
+            data.aggettivoTabella : ''));
 
     $.ajax({
       dataType: "json",
@@ -92,7 +95,9 @@ $(function () {
   stompClient.connect({}, function () {
     stompClient.send('/partita/giocatore/' + idStanza, {}, JSON.stringify({
       'azione': 1,
-      'idTabella': idTabella
+      'idTabella': idTabella,
+      'nomeTabella': nomeTabella,
+      'aggettivoTabella': aggettivoTabella
     }));
     stompClient.subscribe('/partita/stanza/' + idStanza, function (data) {
       let body = JSON.parse(data.body);
@@ -111,8 +116,35 @@ $(function () {
     stompClient.send('/partita/giocatore/' + idStanza, {}, JSON.stringify({
       'azione': 3,
       'idTabella': idTabella,
+      'nomeTabella': nomeTabella,
+      'aggettivoTabella': aggettivoTabella,
       'idPremio': $(this).data('id-premio'),
       'nomePremio': $(this).data('nome-premio')
     }));
+  });
+
+  $('#bottone-cartella-entra').click(function () {
+    if ($("#controllo-id-stanza").val() === "true") {
+      $.ajax({
+        dataType: "json",
+        url: $("#url-stanza").val() + $("#idStanza").val(),
+        success: function (data) {
+          if (data != null && data.nomiTabellaCustom != null
+              && data.nomiTabellaCustom) {
+            $('#cartella-opzioni').html('<div class="mb-3">'
+                + '   <label for="nome" class="form-label">' + $(
+                    '#testo-form-id-cartella').val() + '</label>'
+                + '</div>'
+                + '<div class="mb-3">'
+                + '   <input id="nome" name="nome" type="text" class="form-control" maxlength="50" required>'
+                + '</div>');
+
+            $("#controllo-id-stanza").val("false");
+          }
+        }
+      });
+    } else {
+      $('#form').submit();
+    }
   });
 });

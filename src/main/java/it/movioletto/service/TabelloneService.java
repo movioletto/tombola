@@ -1,35 +1,33 @@
 package it.movioletto.service;
 
-import it.movioletto.constant.PremioEnum;
 import it.movioletto.dto.NumeroUscitoDto;
+import it.movioletto.dto.OpzioniStanzaDto;
+import it.movioletto.dto.PremioDto;
 import it.movioletto.dto.StanzaDto;
+import it.movioletto.dto.TabellaDto;
 import it.movioletto.dto.VincitaDto;
 import java.util.List;
 
 public interface TabelloneService {
 
-  StanzaDto creaStanza(String nome);
+  StanzaDto creaStanza(StanzaDto dto);
 
-  StanzaDto creaStanza(String id, String nome);
+  List<NumeroUscitoDto> getNumeriUsciti(Integer idStanza);
 
-  StanzaDto getStanza(String idStanza);
+  void saveNumeroEstratto(Integer idStanza, int numeroEstratto);
 
-  List<NumeroUscitoDto> getNumeriUsciti(String idStanza);
+  boolean existStanzaByCodice(String codice);
 
-  void saveNumeroEstratto(String idStanza, int numeroEstratto);
-
-  boolean existStanza(String idStanza);
-
-  List<String> getGiocatoriPresenti(String idStanza);
+  List<TabellaDto> getGiocatoriPresenti(Integer idStanza);
 
   List<StanzaDto> getAllStanza();
 
-  List<VincitaDto> getVincite(String idStanza);
+  List<VincitaDto> getVincite(Integer idStanza, OpzioniStanzaDto opzioniStanza);
 
-  PremioEnum getPremioCorrente(String idStanza);
+  PremioDto getPremioCorrente(Integer idStanza, OpzioniStanzaDto opzioniStanza);
 
-  boolean existPremio(String idStanza, String idTabella, Integer idPremio);
+  boolean existPremio(Integer idStanza, Integer idTabella, Integer idPremio);
 
-  void savePremio(String idStanza, String idTabella, Integer idPremio);
+  void savePremio(Integer idStanza, Integer idTabella, Integer idPremio);
 
 }

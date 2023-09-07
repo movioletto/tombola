@@ -2,10 +2,12 @@ package it.movioletto.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -13,7 +15,9 @@ public class MessaggioDto {
 
   private Integer azione;
   private Integer numeroUscito;
-  private String idTabella;
+  private Integer idTabella;
+  private String nomeTabella;
+  private String aggettivoTabella;
   private Integer idPremio;
   private String nomePremio;
 

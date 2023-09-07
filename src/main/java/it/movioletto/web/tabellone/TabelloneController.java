@@ -1,6 +1,5 @@
 package it.movioletto.web.tabellone;
 
-import it.movioletto.constant.PremioEnum;
 import it.movioletto.dto.MessaggioDto;
 import it.movioletto.dto.NumeroUscitoDto;
 import it.movioletto.dto.StanzaDto;
@@ -41,14 +40,14 @@ public class TabelloneController {
   }
 
   @PostMapping("/newAct")
-  public String getNewAct(String nome) {
-    if (StringUtils.isBlank(nome)) {
+  public String getNewAct(StanzaDto dto) {
+    if (StringUtils.isBlank(dto.getNome())) {
       return "redirect:/tabellone/new";
     }
 
-    StanzaDto stanzaDto = tabelloneService.creaStanza(StringUtils.abbreviate(nome, 200));
+    StanzaDto stanzaDto = tabelloneService.creaStanza(dto);
 
-    return "redirect:/tabellone/stanza/" + stanzaDto.getIdStanza();
+    return "redirect:/tabellone/stanza/" + stanzaDto.getCodice();
   }
 
   @GetMapping("/custom")
@@ -57,47 +56,49 @@ public class TabelloneController {
   }
 
   @PostMapping("/customAct")
-  public String getCustomAct(String id, String nome) {
-    if (StringUtils.isBlank(nome)) {
+  public String getCustomAct(StanzaDto dto) {
+    if (StringUtils.isBlank(dto.getNome())) {
       return "redirect:/tabellone/custom";
     }
-    StanzaDto stanzaDto = null;
 
-    String idTemp = id = StringUtils.truncate(id, 20);
-
-    int i = 0;
-    while (tabelloneService.existStanza(idTemp)) {
-      idTemp = StringUtils.truncate(id, 20 - StringUtils.length(String.valueOf(i))) + i++;
-      if (i > 9) {
-        stanzaDto = tabelloneService.creaStanza(StringUtils.abbreviate(nome, 200));
-        break;
-      }
-    }
-
-    if (stanzaDto == null) {
-      stanzaDto = tabelloneService.creaStanza(idTemp, StringUtils.abbreviate(nome, 200));
-    }
+    StanzaDto stanzaDto = tabelloneService.creaStanza(dto);
 
     return "redirect:/tabellone/stanza/" + stanzaDto.getIdStanza() + "/custom";
   }
 
-  @GetMapping({"/stanza/{idStanza}", "/stanza/{idStanza}/{tipoPartita}"})
-  public String getTabellone(Model model, @PathVariable("idStanza") String idStanza,
+  @GetMapping({"/stanza/{codiceStanza}", "/stanza/{codiceStanza}/{tipoPartita}"})
+  public String getTabellone(Model model, @PathVariable("codiceStanza") String codiceStanza,
       @PathVariable(value = "tipoPartita", required = false) String tipoPartita) {
+    StanzaDto stanza = commonService.getStanza(codiceStanza);
 
-    if (!tabelloneService.existStanza(idStanza)) {
+    if (stanza == null) {
       return "redirect:/";
     }
+    Integer idStanza = stanza.getIdStanza();
 
     TabelloneData data = new TabelloneData();
 
-    StanzaDto stanzaDto = tabelloneService.getStanza(idStanza);
-    stanzaDto.setGiocatorePresenteList(tabelloneService.getGiocatoriPresenti(idStanza));
-    data.setStanza(stanzaDto);
+    stanza.setGiocatorePresenteList(tabelloneService.getGiocatoriPresenti(idStanza));
+    data.setStanza(stanza);
 
     List<NumeroUscitoDto> numeriUsciti = tabelloneService.getNumeriUsciti(idStanza);
     data.setNumeroUscitoList(numeriUsciti);
 
+    List<TabellaDto> tabellaList = this.getSequenzaTabellone(numeriUsciti);
+    data.setTabellaList(tabellaList);
+
+    List<VincitaDto> vincitaList = tabelloneService.getVincite(idStanza, stanza.getOpzioniStanza());
+    data.setVincitaList(vincitaList);
+    data.setPremioCorrente(tabelloneService.getPremioCorrente(idStanza, stanza.getOpzioniStanza()));
+
+    data.setTipoPartita(tipoPartita);
+
+    model.addAttribute("data", data);
+
+    return "tabellone/tabellone";
+  }
+
+  private List<TabellaDto> getSequenzaTabellone(List<NumeroUscitoDto> numeriUsciti) {
     List<String> sequenzeTabellone = new ArrayList<>(
         Arrays.asList("1,2,3,4,5|11,12,13,14,15|21,22,23,24,25",
             "6,7,8,9,10|16,17,18,19,20|26,27,28,29,30",
@@ -109,19 +110,7 @@ public class TabelloneController {
     List<TabellaDto> tabellaList = new ArrayList<>();
     sequenzeTabellone.forEach(sequenza -> tabellaList.add(new TabellaDto(sequenza)));
     tabellaList.forEach(tabella -> tabella.setNumeriUsciti(numeriUsciti));
-    data.setTabellaList(tabellaList);
-
-    List<VincitaDto> vincitaList = tabelloneService.getVincite(idStanza);
-    data.setVincitaList(vincitaList);
-    PremioEnum premioCorrente = tabelloneService.getPremioCorrente(idStanza);
-    data.setPremioCorrente(premioCorrente);
-
-    data.setTipoPartita(tipoPartita);
-    data.setAnimaleList(commonService.findAllAnimale());
-
-    model.addAttribute("data", data);
-
-    return "tabellone/tabellone";
+    return tabellaList;
   }
 
   @MessageMapping("/stanza/{idStanza}")

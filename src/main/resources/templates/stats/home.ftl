@@ -6,7 +6,6 @@
 <body>
 
 <input type="hidden" id="url-giocatore-presente" value="<@spring.url '/tabellone/stanza/' />"/>
-<input type="hidden" id="animale-list" value="${data.animaleList?map(prova -> prova.nome)?join("|")}"/>
 
 <h1 class="titolo"><@spring.message "app.titolo" /></h1>
 <div class="container">
@@ -19,9 +18,9 @@
                 <h2 class="mb-0">
                   <button class="btn btn-link d-block text-start" type="button"
                           data-bs-toggle="collapse"
-                          data-bs-target="#corpo-<#if stanza.idStanza??>${stanza.idStanza}</#if>"
+                          data-bs-target="#corpo-<#if stanza.codice??>${stanza.codice}</#if>"
                           aria-expanded="false"
-                          aria-controls="corpo-<#if stanza.idStanza??>${stanza.idStanza}</#if>"
+                          aria-controls="corpo-<#if stanza.codice??>${stanza.codice}</#if>"
                           style="width: 100%;">
                       <#if stanza.nome??>
                           ${stanza.nome}
@@ -29,23 +28,23 @@
                   </button>
                 </h2>
               </div>
-              <div id="corpo-<#if stanza.idStanza??>${stanza.idStanza}</#if>"
+              <div id="corpo-<#if stanza.codice??>${stanza.codice}</#if>"
                    class="collapse multi-collapse">
                 <div class="card-body d-none">
                   <h5 class="card-title">
                       <@spring.message "form.id-partita" />
                   </h5>
                   <p class="card-text">
-                      <#if stanza.idStanza??>
-                          ${stanza.idStanza}
+                      <#if stanza.codice??>
+                          ${stanza.codice}
                       <#else>
                           <@spring.message "nessun-dato.id-stanza" />
                       </#if>
                   </p>
                 </div>
-                  <@layout.premiVinti stanza.vincitaList data.animaleList?map(prova -> prova.nome)/>
+                  <@layout.premiVinti stanza.vincitaList/>
 
-                  <@layout.giocatoriPresenti stanza.giocatorePresenteList stanza.idStanza data.animaleList?map(prova -> prova.nome)/>
+                  <@layout.giocatoriPresenti stanza.giocatorePresenteList![] stanza.codice/>
 
                   <@layout.numeriUsciti stanza.numeroUscitoList false />
               </div>

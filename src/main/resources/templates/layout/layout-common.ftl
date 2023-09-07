@@ -1,4 +1,4 @@
-<#macro premiVinti vincitaList animaleList>
+<#macro premiVinti vincitaList>
   <div class="card-body">
     <h5 class="card-title">
         <@spring.message "form.premi-vinti"/>
@@ -11,10 +11,12 @@
                       ${vincita.nomePremio}
                   </strong>
                     <@spring.message "separatore.premio-vinto" />
-                    <#if utility.isNomeAnimale(vincita.idTabella, animaleList)>
-                      <img src="<@spring.url '/resources/static/image/' + utility.nomeAnimaleDaNomeGiocatore(vincita.idTabella) + '.svg' />" alt="${utility.nomeAnimaleDaNomeGiocatore(vincita.idTabella)}" width="50px">
+                    <#if vincita.tabella.aggettivo??>
+                      <img
+                          src="<@spring.url '/resources/static/image/' + vincita.tabella.nome + '.svg' />"
+                          alt="${vincita.tabella.nome}" width="50px">
                     </#if>
-                    ${utility.camelCaseInStringaNormale(vincita.idTabella)}
+                    ${vincita.tabella.nome} <#if vincita.tabella.aggettivo??>${vincita.tabella.aggettivo}</#if>
                 </#if>
             </#list>
         <#else>
@@ -75,7 +77,7 @@
   </div>
 </#macro>
 
-<#macro giocatoriPresenti giocatorePresenteList idStanza animaleList>
+<#macro giocatoriPresenti giocatorePresenteList idStanza>
   <div class="card-body">
     <h5 class="card-title">
         <@spring.message "form.giocatori-presenti" />
@@ -84,13 +86,17 @@
         <#if giocatorePresenteList?? && giocatorePresenteList?has_content>
             <#list giocatorePresenteList as giocatorePresente>
                 <#if giocatorePresente??>
-                  <span id="giocatore-${giocatorePresente}"
+                  <span id="giocatore-${giocatorePresente.idTabella}"
                         class="giocatore-presente btn btn-primary"
-                        data-giocatore="${giocatorePresente}" data-stanza="${idStanza}">
-                    <#if utility.isNomeAnimale(giocatorePresente, animaleList)>
-                      <img src="<@spring.url '/resources/static/image/' + utility.nomeAnimaleDaNomeGiocatore(giocatorePresente) + '.svg' />" alt="${utility.nomeAnimaleDaNomeGiocatore(giocatorePresente)}" width="50px">
+                        data-giocatore="${giocatorePresente.idTabella}" data-stanza="${idStanza}"
+                        data-giocatore-nome="${giocatorePresente.nome}"
+                        data-giocatore-aggettivo="<#if giocatorePresente.aggettivo??>${giocatorePresente.aggettivo}</#if>">
+                    <#if giocatorePresente.aggettivo??>
+                      <img
+                          src="<@spring.url '/resources/static/image/' + giocatorePresente.nome + '.svg' />"
+                          alt="${giocatorePresente.nome}" width="50px">
                     </#if>
-							      ${utility.camelCaseInStringaNormale(giocatorePresente)}
+                      ${giocatorePresente.nome} <#if giocatorePresente.aggettivo??>${giocatorePresente.aggettivo}</#if>
 						      </span>
                 </#if>
             </#list>

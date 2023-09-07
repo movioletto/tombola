@@ -14,16 +14,21 @@
        value="<@spring.message "separatore.premio-vinto" />">
 <input type="hidden" id="bottone-cartella-premio"
        value="<@spring.message "bottone.cartella.premio" />">
-<input type="hidden" id="animale-list" value="${data.animaleList?map(prova -> prova.nome)?join("|")}"/>
 
-<#if data?? && data.stanza?? && data.stanza.idStanza??>
+<#if data?? && data.stanza?? && data.stanza.codice??>
   <input type="hidden" id="url-premio-corrente"
-         value="<@spring.url '/tabellone/stanza/${data.stanza.idStanza}/premioCorrente/' />">
+         value="<@spring.url '/tabellone/stanza/${data.stanza.codice}/premioCorrente/' />">
 
-  <input type="hidden" id="id-stanza" value="${data.stanza.idStanza}">
+  <input type="hidden" id="id-stanza" value="${data.stanza.codice}">
 </#if>
 <#if data?? && data.tabella?? && data.tabella.idTabella??>
   <input type="hidden" id="id-tabella" value="${data.tabella.idTabella}">
+</#if>
+<#if data?? && data.tabella?? && data.tabella.nome??>
+  <input type="hidden" id="nome-tabella" value="${data.tabella.nome}">
+</#if>
+<#if data?? && data.tabella?? && data.tabella.aggettivo??>
+  <input type="hidden" id="aggettivo-tabella" value="${data.tabella.aggettivo}">
 </#if>
 
 <h1 class="titolo"><@spring.message "app.titolo" /></h1>
@@ -47,8 +52,8 @@
                   <@spring.message "form.id-partita" />
               </h5>
               <p class="card-testo">
-                  <#if data.stanza.idStanza??>
-                      ${data.stanza.idStanza}
+                  <#if data.stanza.codice??>
+                      ${data.stanza.codice}
                   </#if>
               </p>
             </div>
@@ -59,11 +64,13 @@
                   <@spring.message "form.nome-cartella" />
               </h5>
               <p class="card-testo">
-                  <#if data.tabella.idTabella??>
-                      <#if utility.isNomeAnimale(data.tabella.idTabella, data.animaleList?map(prova -> prova.nome))>
-                        <img src="<@spring.url '/resources/static/image/' + utility.nomeAnimaleDaNomeGiocatore(data.tabella.idTabella) + '.svg' />" alt="${utility.nomeAnimaleDaNomeGiocatore(data.tabella.idTabella)}" width="50px">
+                  <#if data.tabella.nome??>
+                      <#if data.tabella.aggettivo??>
+                        <img
+                            src="<@spring.url '/resources/static/image/' + data.tabella.nome + '.svg' />"
+                            alt="${data.tabella.nome}" width="50px">
                       </#if>
-                      ${utility.camelCaseInStringaNormale(data.tabella.idTabella)}
+                      ${data.tabella.nome} <#if data.tabella.aggettivo??>${data.tabella.aggettivo}</#if>
                   </#if>
               </p>
             </div>
@@ -92,7 +99,7 @@
     </#if>
 
   <div id="premi-vinti" class="card">
-      <@layout.premiVinti data.vincitaList data.animaleList?map(prova -> prova.nome)/>
+      <@layout.premiVinti data.vincitaList/>
   </div>
 
   <div id="numeri-usciti" class="card">

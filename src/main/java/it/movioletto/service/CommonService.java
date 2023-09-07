@@ -1,10 +1,8 @@
 package it.movioletto.service;
 
-import it.movioletto.dto.AnimaleDto;
-import java.util.List;
+import it.movioletto.dto.StanzaDto;
 
 public interface CommonService {
 
-  List<AnimaleDto> findAllAnimale();
-
+  StanzaDto getStanza(String codiceStanza);
 }
