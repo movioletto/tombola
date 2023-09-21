@@ -1,5 +1,6 @@
 package it.movioletto.service.impl;
 
+import it.movioletto.dto.OpzioniStanzaDto;
 import it.movioletto.dto.TabellaDto;
 import it.movioletto.model.AggettivoEntity;
 import it.movioletto.model.AnimaleEntity;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +48,7 @@ public class CartellaServiceImpl implements CartellaService {
     TabellaDto tabellaDaCreare;
     if (StringUtils.isNotBlank(dto.getNome())) {
       tabellaDaCreare = this.controlloIdTabella(dto.getNome(), idStanza);
+      tabellaDaCreare.setIcona(dto.getIcona());
     } else {
       tabellaDaCreare = this.creaIdTabella(idStanza);
     }
@@ -56,6 +59,7 @@ public class CartellaServiceImpl implements CartellaService {
         .stanza(new StanzaEntity(idStanza))
         .nome(tabellaDaCreare.getNome())
         .aggettivo(tabellaDaCreare.getAggettivo())
+        .icona(tabellaDaCreare.getIcona())
         .sequenza(sequenza)
         .build();
 
@@ -225,7 +229,8 @@ public class CartellaServiceImpl implements CartellaService {
       aggettivoTabella = StringUtils.capitalize(nomeAggettivo);
     } while (this.existTabella(nomeTabella, aggettivoTabella, idStanza));
 
-    return TabellaDto.builder().nome(nomeTabella).aggettivo(aggettivoTabella).build();
+    return TabellaDto.builder().nome(nomeTabella).aggettivo(aggettivoTabella).icona(nomeTabella)
+        .build();
   }
 
   @Override
@@ -256,19 +261,32 @@ public class CartellaServiceImpl implements CartellaService {
   public TabellaDto getTabella(Integer idTabella, Integer idStanza) {
     TabellaDto out = null;
 
-    Optional<TabellaEntity> entity = tabellaRepository.findByIdTabellaAndIdStanza(idTabella,
+    Optional<TabellaEntity> entityOptional = tabellaRepository.findByIdTabellaAndIdStanza(idTabella,
         idStanza);
 
-    if (entity.isPresent()) {
+    if (entityOptional.isPresent()) {
+      TabellaEntity entity = entityOptional.get();
+
       out = new TabellaDto();
       out.setIdTabella(idTabella);
       out.setIdStanza(idStanza);
-      out.setNome(entity.get().getNome());
-      out.setAggettivo(entity.get().getAggettivo());
-      out.setSequenza(entity.get().getSequenza());
+      out.setNome(entity.getNome());
+      out.setAggettivo(entity.getAggettivo());
+      out.setIcona(entity.getIcona());
+      out.setSequenza(entity.getSequenza());
     }
 
     return out;
+  }
+
+  @Override
+  public boolean isValidaNuovaCartella(TabellaDto dto, OpzioniStanzaDto opzioniStanza) {
+    if (BooleanUtils.isTrue(opzioniStanza.getNomiTabellaCustom()) && StringUtils.isBlank(
+        dto.getNome())) {
+      return false;
+    }
+    return !BooleanUtils.isTrue(opzioniStanza.getIconeTabella()) || !StringUtils.isBlank(
+        dto.getIcona());
   }
 
 }

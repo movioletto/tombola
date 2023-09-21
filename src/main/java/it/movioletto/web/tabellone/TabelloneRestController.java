@@ -120,6 +120,7 @@ public class TabelloneRestController {
         .idPremio(idPremio)
         .nomeTabella(tabella.getNome())
         .aggettivoTabella(tabella.getAggettivo())
+        .iconaTabella(tabella.getIcona())
         .build();
   }
 

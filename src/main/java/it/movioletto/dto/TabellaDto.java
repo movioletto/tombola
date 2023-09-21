@@ -21,6 +21,7 @@ public class TabellaDto {
   private String codiceStanza;
   private String nome;
   private String aggettivo;
+  private String icona;
   private List<List<NumeroDto>> sequenza;
 
   public TabellaDto(String sequenza) {

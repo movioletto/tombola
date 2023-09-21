@@ -42,6 +42,9 @@ public class TabellaEntity implements Serializable {
   @Column(name = "aggettivo")
   private String aggettivo;
 
+  @Column(name = "icona")
+  private String icona;
+
   @Column(name = "sequenza")
   private String sequenza;
 

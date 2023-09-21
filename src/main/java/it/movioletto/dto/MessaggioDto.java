@@ -18,6 +18,7 @@ public class MessaggioDto {
   private Integer idTabella;
   private String nomeTabella;
   private String aggettivoTabella;
+  private String iconaTabella;
   private Integer idPremio;
   private String nomePremio;
 

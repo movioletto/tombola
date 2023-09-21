@@ -8,13 +8,13 @@ $(function () {
     }
   });
 
-  // $('#nomiTabellaCustom').change(function () {
-  //   if ($(this).is(":checked")) {
-  //     $('#contenitore-icone-tabelle-custom').removeClass("d-none");
-  //   } else {
-  //     $('#contenitore-icone-tabelle-custom').addClass("d-none");
-  //   }
-  // });
+  $('#nomiTabellaCustom').change(function () {
+    if ($(this).is(":checked")) {
+      $('#contenitore-icone-tabelle-custom').removeClass("d-none");
+    } else {
+      $('#contenitore-icone-tabelle-custom').addClass("d-none");
+    }
+  });
 
   $('#tombolino').change(function () {
     if ($(this).is(":checked")) {

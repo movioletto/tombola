@@ -42,7 +42,7 @@
                       </#if>
                   </p>
                 </div>
-                  <@layout.premiVinti stanza.vincitaList/>
+                  <@layout.premiVinti stanza.vincitaList![]/>
 
                   <@layout.giocatoriPresenti stanza.giocatorePresenteList![] stanza.codice/>
 

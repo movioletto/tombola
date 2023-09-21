@@ -11,10 +11,10 @@
                       ${vincita.nomePremio}
                   </strong>
                     <@spring.message "separatore.premio-vinto" />
-                    <#if vincita.tabella.aggettivo??>
+                    <#if vincita.tabella.icona??>
                       <img
-                          src="<@spring.url '/resources/static/image/' + vincita.tabella.nome + '.svg' />"
-                          alt="${vincita.tabella.nome}" width="50px">
+                          src="<@spring.url '/resources/static/image/' + vincita.tabella.icona + '.svg' />"
+                          alt="${vincita.tabella.icona}" width="50px">
                     </#if>
                     ${vincita.tabella.nome} <#if vincita.tabella.aggettivo??>${vincita.tabella.aggettivo}</#if>
                 </#if>
@@ -90,11 +90,12 @@
                         class="giocatore-presente btn btn-primary"
                         data-giocatore="${giocatorePresente.idTabella}" data-stanza="${idStanza}"
                         data-giocatore-nome="${giocatorePresente.nome}"
-                        data-giocatore-aggettivo="<#if giocatorePresente.aggettivo??>${giocatorePresente.aggettivo}</#if>">
-                    <#if giocatorePresente.aggettivo??>
+                        data-giocatore-aggettivo="<#if giocatorePresente.aggettivo??>${giocatorePresente.aggettivo}</#if>"
+                        data-giocatore-icona="<#if giocatorePresente.icona??>${giocatorePresente.icona}</#if>">
+                    <#if giocatorePresente.icona??>
                       <img
-                          src="<@spring.url '/resources/static/image/' + giocatorePresente.nome + '.svg' />"
-                          alt="${giocatorePresente.nome}" width="50px">
+                          src="<@spring.url '/resources/static/image/' + giocatorePresente.icona + '.svg' />"
+                          alt="${giocatorePresente.icona}" width="50px">
                     </#if>
                       ${giocatorePresente.nome} <#if giocatorePresente.aggettivo??>${giocatorePresente.aggettivo}</#if>
 						      </span>
@@ -112,7 +113,7 @@
       <div class="row">
         <div class="col-sm">
             <@spring.message "form.giocatore-presente.cartella" />
-          <span class="id-cartella-giocatore-presente"></span>
+          <span id="id-cartella-giocatore-presente" data-id-tabella=""></span>
         </div>
         <div class="col-sm text-right">
 					<span id="chiudi-cartella-giocatore-presente" class="btn btn-danger"

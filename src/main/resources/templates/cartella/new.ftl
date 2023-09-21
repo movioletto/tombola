@@ -43,6 +43,25 @@
                            required>
                   </div>
                 </#if>
+
+                <#if data?? && data.opzioniStanza?? && data.opzioniStanza.iconeTabella?? && data.opzioniStanza.iconeTabella>
+                  <div class="mb-3">
+                    <label class="form-label"><@spring.message "form.icona" /></label>
+                  </div>
+                  <div class="d-flex justify-content-between mt-3 mb-3">
+                      <#if data?? && data.animaleList?? && data.animaleList?has_content>
+                          <#list data.animaleList as animale>
+                            <button type="button"
+                                    class="btn btn-outline-primary icon-animale<#if animale?index == 0> active</#if>" data-animale="${animale.nome}">
+                              <img
+                                  src="<@spring.url '/resources/static/image/' + animale.nome + '.svg' />"
+                                  alt="${animale}" width="50px">
+                            </button>
+                          </#list>
+                      </#if>
+                    <input type="hidden" id="icona" name="icona" value="${data.animaleList[0].nome}">
+                  </div>
+                </#if>
             </div>
 
             <div class="mb-3">

@@ -30,6 +30,9 @@
 <#if data?? && data.tabella?? && data.tabella.aggettivo??>
   <input type="hidden" id="aggettivo-tabella" value="${data.tabella.aggettivo}">
 </#if>
+<#if data?? && data.tabella?? && data.tabella.icona??>
+  <input type="hidden" id="icona-tabella" value="${data.tabella.icona}">
+</#if>
 
 <h1 class="titolo"><@spring.message "app.titolo" /></h1>
 <div class="container">
@@ -65,10 +68,10 @@
               </h5>
               <p class="card-testo">
                   <#if data.tabella.nome??>
-                      <#if data.tabella.aggettivo??>
+                      <#if data.tabella.icona??>
                         <img
-                            src="<@spring.url '/resources/static/image/' + data.tabella.nome + '.svg' />"
-                            alt="${data.tabella.nome}" width="50px">
+                            src="<@spring.url '/resources/static/image/' + data.tabella.icona + '.svg' />"
+                            alt="${data.tabella.icona}" width="50px">
                       </#if>
                       ${data.tabella.nome} <#if data.tabella.aggettivo??>${data.tabella.aggettivo}</#if>
                   </#if>

@@ -25,4 +25,19 @@ $(function () {
     }
   });
 
+  $('.icon-animale').click(function() {
+    let animaleScelto = $(this).data('animale');
+
+    $('#icona').val(animaleScelto);
+
+    $('.icon-animale').each(function () {
+      if($(this).data('animale') !== animaleScelto) {
+        $(this).removeClass("active");
+      }
+      else {
+        $(this).addClass("active");
+      }
+    });
+  });
+
 });

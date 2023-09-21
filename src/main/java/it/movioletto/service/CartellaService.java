@@ -1,5 +1,6 @@
 package it.movioletto.service;
 
+import it.movioletto.dto.OpzioniStanzaDto;
 import it.movioletto.dto.TabellaDto;
 
 public interface CartellaService {
@@ -15,4 +16,6 @@ public interface CartellaService {
   boolean existSequenza(String sequenza, Integer idStanza);
 
   TabellaDto getTabella(Integer idTabella, Integer idStanza);
+
+  boolean isValidaNuovaCartella(TabellaDto dto, OpzioniStanzaDto opzioniStanza);
 }

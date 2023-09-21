@@ -56,8 +56,7 @@ public class CartellaController {
       return "redirect:/";
     }
 
-    if (BooleanUtils.isTrue(stanza.getOpzioniStanza().getNomiTabellaCustom())
-        && StringUtils.isBlank(dto.getNome())) {
+    if (!cartellaService.isValidaNuovaCartella(dto, stanza.getOpzioniStanza())) {
       redirectAttributes.addFlashAttribute("dto", dto);
 
       return "redirect:/cartella/new/redirect";
@@ -79,8 +78,7 @@ public class CartellaController {
       return "redirect:/";
     }
 
-    if (BooleanUtils.isTrue(stanza.getOpzioniStanza().getNomiTabellaCustom())
-        && StringUtils.isBlank(dto.getNome())) {
+    if (!cartellaService.isValidaNuovaCartella(dto, stanza.getOpzioniStanza())) {
       if (StringUtils.isBlank(dto.getCodiceStanza())) {
         dto.setCodiceStanza(codiceStanza);
       }
@@ -108,6 +106,8 @@ public class CartellaController {
     CartellaNewData data = CartellaNewData.builder()
         .tabella(dto)
         .opzioniStanza(stanza.getOpzioniStanza())
+        .animaleList(BooleanUtils.isTrue(stanza.getOpzioniStanza().getIconeTabella())
+            ? commonService.getDieciAnimaleRandom() : null)
         .build();
 
     model.addAttribute("data", data);
@@ -164,7 +164,6 @@ public class CartellaController {
     CartellaData data = CartellaData.builder()
         .stanza(stanza)
         .numeroUscitoList(numeriUsciti)
-        //TODO mettere il nome del premio preso dalla tabella
         .vincitaList(tabelloneService.getVincite(idStanza, stanza.getOpzioniStanza()))
         .premioCorrente(tabelloneService.getPremioCorrente(idStanza, stanza.getOpzioniStanza()))
         .build();

@@ -13,6 +13,7 @@ $(function () {
   let idTabella = $('#id-tabella').val();
   let nomeTabella = $('#nome-tabella').val();
   let aggettivoTabella = $('#aggettivo-tabella').val();
+  let iconaTabella = $('#icona-tabella').val();
 
   let abilitaSuoni = $('#abilitaSuoni');
   abilitaSuoni.change(function () {
@@ -51,10 +52,10 @@ $(function () {
     $('.lista-premi-vinti').append(
         '<strong class="badge bg-success ms-2">' + data.nomePremio
         + '</strong> ' + $('#separatore-premio-vinto').val()
-        + (data.aggettivoTabella !== null && data.aggettivoTabella !== ""
-        && data.aggettivoTabella !== undefined
+        + (data.iconaTabella !== null && data.iconaTabella !== ""
+        && data.iconaTabella !== undefined
             ? '<img src="/tombola/resources/static/image/'
-            + data.nomeTabella + '.svg" alt="' + data.nomeTabella
+            + data.iconaTabella + '.svg" alt="' + data.iconaTabella
             + '" width="50px">' : '')
         + data.nomeTabella + ' ' + (data.aggettivoTabella !== null
         && data.aggettivoTabella !== "" && data.aggettivoTabella !== undefined ?
@@ -97,7 +98,8 @@ $(function () {
       'azione': 1,
       'idTabella': idTabella,
       'nomeTabella': nomeTabella,
-      'aggettivoTabella': aggettivoTabella
+      'aggettivoTabella': aggettivoTabella,
+      'iconaTabella': iconaTabella
     }));
     stompClient.subscribe('/partita/stanza/' + idStanza, function (data) {
       let body = JSON.parse(data.body);

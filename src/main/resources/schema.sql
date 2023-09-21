@@ -42,6 +42,7 @@ CREATE TABLE tabella(
     id_stanza integer,
     nome varchar(50),
     aggettivo varchar(20),
+    icona varchar(50),
     sequenza varchar(80),
     PRIMARY KEY (id_tabella),
     CONSTRAINT stanza_tabella FOREIGN KEY (id_stanza) REFERENCES stanza (id_stanza)

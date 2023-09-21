@@ -13,17 +13,17 @@ $(function () {
   creaQrCode();
 
   $('#visualizza-qrcode').change(function () {
-    if ($(this).is(":checked")) {
-      $('#qrcode-partita').parent().removeClass("d-none");
+    if ($(this).is(':checked')) {
+      $('#qrcode-partita').parent().removeClass('d-none');
     } else {
-      $('#qrcode-partita').parent().addClass("d-none");
+      $('#qrcode-partita').parent().addClass('d-none');
     }
   });
 
   $('#modifica-url').bind('click', function () {
-    let urlCompleto = $('#link-stanza').attr("href");
-    let inizioUrl = urlCompleto.substring(0, urlCompleto.indexOf("/tombola"));
-    let fineUrl = urlCompleto.substring(urlCompleto.indexOf("/tombola"));
+    let urlCompleto = $('#link-stanza').attr('href');
+    let inizioUrl = urlCompleto.substring(0, urlCompleto.indexOf('/tombola'));
+    let fineUrl = urlCompleto.substring(urlCompleto.indexOf('/tombola'));
 
     let inizioUlrHtml = `<input id="inizio-modifica-url" name="inizio-modifica-url" type="text" value="${inizioUrl}">`;
     let fineUrlHtml = `<span id="fine-modifica-url">${fineUrl}</span>`;
@@ -44,7 +44,7 @@ $(function () {
     $(this).addClass('d-none');
     $('#modifica-url').removeClass('d-none');
 
-    $('#qrcode-partita').html("");
+    $('#qrcode-partita').html('');
     creaQrCode();
   });
 
@@ -54,7 +54,7 @@ $(function () {
       let idPremio = $(this).data('id-premio');
 
       $.ajax({
-        dataType: "json",
+        dataType: 'json',
         url: url + idTabella + '/' + idPremio,
         success: function (data) {
           $('#conferma-premio').addClass('d-none');
@@ -73,21 +73,20 @@ $(function () {
           $('.lista-premi-vinti').append(
               '<strong class="badge bg-success ms-2">' + data.nomePremio
               + '</strong> ' + $('#separatore-premio-vinto').val()
-              + (data.aggettivoTabella !== null && data.aggettivoTabella !== ""
-              && data.aggettivoTabella !== undefined
+              + (notBlank(data.iconaTabella)
                   ? '<img src="/tombola/resources/static/image/'
-                  + data.nomeTabella + '.svg" alt="' + data.nomeTabella
+                  + data.iconaTabella + '.svg" alt="' + data.iconaTabella
                   + '" width="50px">'
                   : '')
-              + data.nomeTabella + ' ' + (data.aggettivoTabella !== null
-              && data.aggettivoTabella !== "" && data.aggettivoTabella !== undefined
-                  ? data.aggettivoTabella : ''));
+              + data.nomeTabella + (notBlank(data.aggettivoTabella)
+                  ? ' ' + data.aggettivoTabella : ''));
 
           stompClient.send('/partita/stanza/' + idStanza, {}, JSON.stringify({
             'azione': data.azione,
             'idTabella': data.idTabella,
             'nomeTabella': data.nomeTabella,
             'aggettivoTabella': data.aggettivoTabella,
+            'iconaTabella': data.iconaTabella,
             'nomePremio': data.nomePremio,
             'idPremio': data.idPremio
           }));
@@ -118,16 +117,15 @@ $(function () {
           + '" class="giocatore-presente btn btn-primary" data-giocatore="'
           + data.idTabella + '" data-stanza="' + idStanza
           + '" data-giocatore-nome="' + data.nomeTabella + '"'
-          + ' data-giocatore-aggettivo="' + (data.aggettivoTabella !== null
-          && data.aggettivoTabella !== "" && data.aggettivoTabella !== undefined
-              ? data.aggettivoTabella : '') + '">'
-          + (data.aggettivoTabella !== null && data.aggettivoTabella !== ""
-          && data.aggettivoTabella !== undefined
+          + ' data-giocatore-aggettivo="' + (notBlank(data.aggettivoTabella)
+              ? data.aggettivoTabella : '') + '"'
+          + ' data-giocatore-icona="' + (notBlank(data.iconaTabella)
+              ? data.iconaTabella : '') + '">'
+          + (notBlank(data.iconaTabella)
               ? '<img src="/tombola/resources/static/image/'
-              + data.nomeTabella + '.svg" alt="'
-              + data.nomeTabella + '" width="50px">' : '')
-          + data.nomeTabella + ' ' + (data.aggettivoTabella !== null
-          && data.aggettivoTabella !== "" && data.aggettivoTabella !== undefined
+              + data.iconaTabella + '.svg" alt="'
+              + data.iconaTabella + '" width="50px">' : '')
+          + data.nomeTabella + ' ' + (notBlank(data.aggettivoTabella)
               ? data.aggettivoTabella : '') + '</span>');
     }
 
@@ -147,7 +145,9 @@ $(function () {
     confermaPremio.find('.nome-premio-giocatore-presente').html(
         data.nomePremio);
 
-    confermaPremio.removeClass('d-none');
+    if($('#id-cartella-giocatore-presente').data('id-tabella') == data.idTabella) {
+      confermaPremio.removeClass('d-none');
+    }
 
     bindClickConfermaPremio(urlPremio);
   }
