@@ -70,13 +70,7 @@
               <p class="card-testo">
                   <span id="container-url">
                   <#if data.stanza.codice??>
-                      <#if data.tipoPartita?? && data.tipoPartita == 'custom'>
-                        <a href="<@spring.url '/cartella/custom/${data.stanza.codice}' />"
-                           id="link-stanza"></a>
-                      <#else>
-                        <a href="<@spring.url '/cartella/new/${data.stanza.codice}' />"
-                           id="link-stanza"></a>
-                      </#if>
+                    <a href="<@spring.url '/cartella/new/${data.stanza.codice}' />" id="link-stanza"></a>
                   <#else>
                       <@spring.message "nessun-dato.string" />
                   </#if>

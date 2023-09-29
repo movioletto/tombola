@@ -23,7 +23,6 @@ public class TabelloneData {
   private List<NumeroUscitoDto> numeroUscitoList;
   private List<VincitaDto> vincitaList;
   private PremioDto premioCorrente;
-  private String tipoPartita;
   private List<AnimaleDto> animaleList;
 
 }

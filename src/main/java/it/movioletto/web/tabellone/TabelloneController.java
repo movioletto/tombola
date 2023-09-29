@@ -50,25 +50,8 @@ public class TabelloneController {
     return "redirect:/tabellone/stanza/" + stanzaDto.getCodice();
   }
 
-  @GetMapping("/custom")
-  public String getCustom() {
-    return "tabellone/custom";
-  }
-
-  @PostMapping("/customAct")
-  public String getCustomAct(StanzaDto dto) {
-    if (StringUtils.isBlank(dto.getNome())) {
-      return "redirect:/tabellone/custom";
-    }
-
-    StanzaDto stanzaDto = tabelloneService.creaStanza(dto);
-
-    return "redirect:/tabellone/stanza/" + stanzaDto.getIdStanza() + "/custom";
-  }
-
-  @GetMapping({"/stanza/{codiceStanza}", "/stanza/{codiceStanza}/{tipoPartita}"})
-  public String getTabellone(Model model, @PathVariable("codiceStanza") String codiceStanza,
-      @PathVariable(value = "tipoPartita", required = false) String tipoPartita) {
+  @GetMapping("/stanza/{codiceStanza}")
+  public String getTabellone(Model model, @PathVariable("codiceStanza") String codiceStanza) {
     StanzaDto stanza = commonService.getStanza(codiceStanza);
 
     if (stanza == null) {
@@ -90,8 +73,6 @@ public class TabelloneController {
     List<VincitaDto> vincitaList = tabelloneService.getVincite(idStanza, stanza.getOpzioniStanza());
     data.setVincitaList(vincitaList);
     data.setPremioCorrente(tabelloneService.getPremioCorrente(idStanza, stanza.getOpzioniStanza()));
-
-    data.setTipoPartita(tipoPartita);
 
     model.addAttribute("data", data);
 

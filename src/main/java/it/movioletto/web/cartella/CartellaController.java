@@ -115,40 +115,6 @@ public class CartellaController {
     return "cartella/new";
   }
 
-  @GetMapping("/custom")
-  public String getCustom() {
-    return "cartella/custom";
-  }
-
-  @PostMapping("/customAct")
-  public String getCustomActPost(TabellaDto dto) {
-    StanzaDto stanza = commonService.getStanza(dto.getCodiceStanza());
-
-    if (stanza == null) {
-      return "redirect:/";
-    }
-    dto.setIdStanza(stanza.getIdStanza());
-    TabellaDto tabellaDto = cartellaService.creaTabella(dto);
-
-    return "redirect:/cartella/stanza/" + tabellaDto.getCodiceStanza() + "/cartella/"
-        + tabellaDto.getIdTabella();
-  }
-
-  @GetMapping("/custom/{codiceStanza}")
-  public String getCustomAct(Model model, @PathVariable("codiceStanza") String codiceStanza) {
-    if (!tabelloneService.existStanzaByCodice(codiceStanza)) {
-      return "redirect:/";
-    }
-
-    CartellaData data = CartellaData.builder()
-        .stanza(StanzaDto.builder().codice(codiceStanza).build())
-        .build();
-
-    model.addAttribute("data", data);
-
-    return "cartella/custom";
-  }
-
   @GetMapping("/stanza/{codiceStanza}/cartella/{idTabella}")
   public String getTabella(Model model, @PathVariable("codiceStanza") String codiceStanza,
       @PathVariable("idTabella") Integer idTabella) {
