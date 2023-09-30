@@ -19,17 +19,17 @@
   <input type="hidden" id="id-stanza" value="${data.stanza.codice}">
 </#if>
 
-<h1 class="titolo"><@spring.message "app.titolo" /></h1>
-<div class="container">
+<h1 class="titolo text-center display-4 display-md-2"><@spring.message "app.titolo" /></h1>
+<div class="container-lg">
     <#if data?? && data.stanza??>
       <div class="card">
         <div class="card-body">
           <div class="row">
-            <div class="col-sm">
-              <h5 class="card-titolo">
+            <div class="col-lg-6 col-12">
+              <h5 class="card-titolo col-lg-6 col-12">
                   <@spring.message "form.nome-partita" />
               </h5>
-              <p class="card-testo">
+              <p class="card-testo col-lg-6 col-12">
                   <#if data.stanza.nome??>
                       ${data.stanza.nome}
                   <#else>
@@ -37,11 +37,12 @@
                   </#if>
               </p>
             </div>
-            <div class="col-sm">
-              <h5 class="card-titolo">
+            <div class="col-lg-6 col-12">
+              <h5 class="card-titolo col-lg-6 col-12">
                   <@spring.message "form.numero-giocatori" />
               </h5>
-              <p id="numero-giocatori" class="card-testo">
+              <p id="numero-giocatori"
+                 class="card-testo col-lg-6 col-12">
                   <#if data.stanza.giocatorePresenteList??>
                       ${data.stanza.giocatorePresenteList?size}
                   <#else>
@@ -49,11 +50,11 @@
                   </#if>
               </p>
             </div>
-            <div class="col-sm">
-              <h5 class="card-titolo">
+            <div class="col-lg-6 col-12">
+              <h5 class="card-titolo col-lg-6 col-12">
                   <@spring.message "form.id-partita" />
               </h5>
-              <p class="card-testo">
+              <p class="card-testo col-lg-6 col-12">
                   <#if data.stanza.codice??>
                       ${data.stanza.codice}
                   <#else>
@@ -63,14 +64,15 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-sm">
-              <h5 class="card-titolo">
+            <div class="col-lg-6 col-12">
+              <h5 class="card-titolo col-xl-6 col-lg-6 col-lg-6 col-12">
                   <@spring.message "form.link-partita" />
               </h5>
-              <p class="card-testo">
+              <p class="card-testo col-lg-6 col-12">
                   <span id="container-url">
                   <#if data.stanza.codice??>
-                    <a href="<@spring.url '/cartella/new/${data.stanza.codice}' />" id="link-stanza"></a>
+                    <a href="<@spring.url '/cartella/new/${data.stanza.codice}' />"
+                       id="link-stanza"></a>
                   <#else>
                       <@spring.message "nessun-dato.string" />
                   </#if>
@@ -80,13 +82,13 @@
                       class="far fa-save"></i></a>
               </p>
             </div>
-            <div class="col-sm">
-              <h5 class="card-titolo">
+            <div class="col-lg-6 col-12">
+              <h5 class="card-titolo col-lg-6 col-12">
                 <label for="visualizza-qrcode">
                     <@spring.message "form.qrcode-partita" />
                 </label>
               </h5>
-              <p class="card-testo">
+              <p class="card-testo col-lg-6 col-12">
                 <input id="visualizza-qrcode" type="checkbox" class="apple-switch">
               </p>
             </div>
@@ -119,7 +121,7 @@
         </#list>
     </#if>
 
-  <button id="estrai-numero" class="btn btn-danger estrai-numero">
+  <button id="estrai-numero" class="btn btn-danger estrai-numero col-lg-6 offset-lg-3 col-12">
       <@spring.message "bottone.tabellone.estrai-numero" />
   </button>
 

@@ -55,7 +55,7 @@
 </#macro>
 
 <#macro cartella sequenza stile>
-  <div class="col-sm">
+  <div class="<#if stile?length == 0>col-lg-6 </#if>col-12">
     <table>
       <tbody>
       <#list sequenza as riga>
@@ -63,15 +63,46 @@
             <#list riga as numeroRiga>
               <td ${stile}>
                   <#if numeroRiga.numero != 0>
-                    <span id="numero-${numeroRiga.numero}"
-                          class="numero-tabella ${numeroRiga.uscito?string('numero-uscito-tabella', '')}">
-									${numeroRiga.numero}
-                                </span>
+                    <span
+                        class="numero-tabella ${numeroRiga.uscito?string('numero-uscito-tabella', '')} numero-${numeroRiga.numero}"
+                        data-numero="${numeroRiga.numero}">
+									    ${numeroRiga.numero}
+                    </span>
                   </#if>
               </td>
             </#list>
         </tr>
       </#list>
+      </tbody>
+    </table>
+  </div>
+</#macro>
+
+<#macro cartellaVerticale sequenza stile>
+  <div class="col-12">
+    <table>
+      <tbody>
+      <#if sequenza?? && sequenza?has_content>
+          <#assign numeroRighe = sequenza?size>
+          <#assign numeroColonne = sequenza[0]?size>
+
+          <#list 0..numeroColonne-1 as colonna>
+            <tr>
+                <#list 0..numeroRighe-1 as riga>
+                  <td ${stile}>
+                      <#assign rigaSequenza = sequenza[riga]>
+                      <#if rigaSequenza[colonna].numero != 0>
+                        <span
+                            class="numero-tabella ${rigaSequenza[colonna].uscito?string('numero-uscito-tabella', '')} numero-${rigaSequenza[colonna].numero}"
+                            data-numero="${rigaSequenza[colonna].numero}">
+									        ${rigaSequenza[colonna].numero}
+                        </span>
+                      </#if>
+                  </td>
+                </#list>
+            </tr>
+          </#list>
+      </#if>
       </tbody>
     </table>
   </div>

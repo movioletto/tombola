@@ -1,10 +1,11 @@
 $(function () {
 
   $('.numero-tabella').click(function () {
-    if ($(this).hasClass('numero-uscito-tabella')) {
-      $(this).removeClass('numero-uscito-tabella');
+    let numero = $(".numero-" + $(this).data("numero"));
+    if (numero.hasClass('numero-uscito-tabella')) {
+      numero.removeClass('numero-uscito-tabella');
     } else {
-      $(this).addClass('numero-uscito-tabella');
+      numero.addClass('numero-uscito-tabella');
     }
   });
 
@@ -26,7 +27,7 @@ $(function () {
   autoSelezione.change(function () {
     if ($(this).is(":checked")) {
       $('.numero-uscito').each(function () {
-        let casellaNumeroCorrente = $('#numero-' + $(this).html());
+        let casellaNumeroCorrente = $('.numero-' + $(this).data("numero"));
         if (!casellaNumeroCorrente.hasClass('numero-uscito-tabella')) {
           casellaNumeroCorrente.addClass('numero-uscito-tabella');
         }
@@ -39,7 +40,7 @@ $(function () {
     suonaNuovoNumero();
 
     if (autoSelezione.is(":checked")) {
-      $('#numero-' + data.numeroUscito).addClass('numero-uscito-tabella');
+      $('.numero-' + data.numeroUscito).addClass('numero-uscito-tabella');
     }
   }
 
@@ -148,5 +149,21 @@ $(function () {
     } else {
       $('#form').submit();
     }
+  });
+
+  $('#link-cartella-verticale').bind('click', function () {
+    $('#link-cartella-verticale').addClass("d-none");
+    $('#link-cartella-orizzontale').removeClass("d-none");
+
+    $('#cartella-orizzontale').addClass("d-none");
+    $('#cartella-verticale').removeClass("d-none");
+  });
+
+  $('#link-cartella-orizzontale').bind('click', function () {
+    $('#link-cartella-orizzontale').addClass("d-none");
+    $('#link-cartella-verticale').removeClass("d-none");
+
+    $('#cartella-verticale').addClass("d-none");
+    $('#cartella-orizzontale').removeClass("d-none");
   });
 });

@@ -11,7 +11,7 @@
        value="<#if data?? && data.tabella??>false<#else>true</#if>">
 
 <h1 class="titolo"><@spring.message "app.titolo" /></h1>
-<div class="container">
+<div class="container-lg">
   <div class="card">
     <div class="card-body">
       <div class="row">

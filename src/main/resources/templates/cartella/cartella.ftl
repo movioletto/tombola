@@ -35,26 +35,26 @@
 </#if>
 
 <h1 class="titolo"><@spring.message "app.titolo" /></h1>
-<div class="container">
+<div class="container-lg">
     <#if data?? && data.stanza??>
       <div class="card">
         <div class="card-body">
           <div class="row">
-            <div class="col-sm">
-              <h5 class="card-titolo">
+            <div class="col-lg-6 col-12">
+              <h5 class="card-titolo col-lg-6 col-12">
                   <@spring.message "form.nome-partita" />
               </h5>
-              <p class="card-testo">
+              <p class="card-testo col-lg-6 col-12">
                   <#if data.stanza.nome??>
                       ${data.stanza.nome}
                   </#if>
               </p>
             </div>
-            <div class="col-sm">
-              <h5 class="card-titolo">
+            <div class="col-lg-6 col-12">
+              <h5 class="card-titolo col-lg-6 col-12">
                   <@spring.message "form.id-partita" />
               </h5>
-              <p class="card-testo">
+              <p class="card-testo col-lg-6 col-12">
                   <#if data.stanza.codice??>
                       ${data.stanza.codice}
                   </#if>
@@ -62,11 +62,11 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-sm">
-              <h5 class="card-titolo">
+            <div class="col-lg-6 col-12">
+              <h5 class="card-titolo col-lg-6 col-12">
                   <@spring.message "form.nome-cartella" />
               </h5>
-              <p class="card-testo">
+              <p class="card-testo col-lg-6 col-12">
                   <#if data.tabella.nome??>
                       <#if data.tabella.icona??>
                         <img
@@ -77,22 +77,22 @@
                   </#if>
               </p>
             </div>
-            <div class="col-sm">
-              <h5 class="card-titolo">
+            <div class="col-lg-6 col-12">
+              <h5 class="card-titolo col-lg-6 col-12">
                 <label for="auto-selezione">
                     <@spring.message "form.selezione-automatica" />
                 </label>
               </h5>
-              <p class="card-testo">
+              <p class="card-testo col-lg-6 col-12">
                 <input id="auto-selezione" type="checkbox" class="apple-switch">
               </p>
               <br>
-              <h5 class="card-titolo">
+              <h5 class="card-titolo col-lg-6 col-12">
                 <label for="abilitaSuoni">
                     <@spring.message "form.abilita-suoni" />
                 </label>
               </h5>
-              <p class="card-testo">
+              <p class="card-testo col-lg-6 col-12">
                 <input id="abilitaSuoni" type="checkbox" class="apple-switch">
               </p>
             </div>
@@ -110,13 +110,27 @@
   </div>
 
     <#if data?? && data.tabella?? && data.tabella.sequenza?? && data.tabella.sequenza?has_content>
-      <div class="row">
+      <button id="link-cartella-verticale"
+              class="btn btn-primary cambio-layout-tabella col-lg-6 offset-lg-3 col-12">
+        <i class="fas fa-grip-vertical"></i> Cartella verticale
+      </button>
+      <button id="link-cartella-orizzontale"
+              class="btn btn-primary cambio-layout-tabella col-lg-6 offset-lg-3 col-12 d-none">
+        <i class="fas fa-grip-horizontal"></i> Cartella orizzontale
+      </button>
+
+      <div id="cartella-orizzontale" class="row">
           <@layout.cartella data.tabella.sequenza 'style="width: 11.11%;"' />
+      </div>
+
+      <div id="cartella-verticale" class="row d-none">
+          <@layout.cartellaVerticale data.tabella.sequenza 'style="width: 11.11%;"' />
       </div>
     </#if>
 
     <#if data?? && data.premioCorrente?? && data.premioCorrente.codice?? && data.premioCorrente.valore??>
-      <button id="dichiarazione-premio" class="btn btn-danger dichiarazione-premio"
+      <button id="dichiarazione-premio"
+              class="btn btn-danger dichiarazione-premio col-lg-6 offset-lg-3 col-12"
               data-id-premio="${data.premioCorrente.codice}"
               data-nome-premio="${data.premioCorrente.valore}">
           <@spring.message "bottone.cartella.premio" /> ${data.premioCorrente.valore}

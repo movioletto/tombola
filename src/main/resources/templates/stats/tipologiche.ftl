@@ -4,7 +4,7 @@
 <body>
 
 <h1 class="titolo"><@spring.message "app.titolo" /></h1>
-<div class="container">
+<div class="container-lg">
 
     <#if data?? && ((data.animaleList?? && data.animaleList?has_content) || (data.aggettivoList?? && data.aggettivoList?has_content))>
         <#if data?? && data.animaleList?? && data.animaleList?has_content>

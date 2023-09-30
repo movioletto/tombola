@@ -8,7 +8,7 @@
 <input type="hidden" id="url-giocatore-presente" value="<@spring.url '/tabellone/stanza/' />"/>
 
 <h1 class="titolo"><@spring.message "app.titolo" /></h1>
-<div class="container">
+<div class="container-lg">
 
     <#if data?? && data.stanzaList?? && data.stanzaList?has_content>
       <div class="accordion" id="accordionStanze">

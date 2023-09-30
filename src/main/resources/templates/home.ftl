@@ -3,7 +3,7 @@
 <#include "layout/header.ftl" />
 <body>
 <h1 class="titolo-home"><@spring.message "app.titolo" /></h1>
-<div class="container">
+<div class="container-lg">
   <div class="row">
     <div class="col-sm">
       <div class="card bottone-home">

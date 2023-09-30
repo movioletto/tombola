@@ -86,20 +86,26 @@ table td {
 }
 
 .numero-uscito-tabella {
-  display: block;
-  background-color: red;
+  /*display: block;*/
+  /*background-color: red;*/
+  display: inline-block !important;
+  width: 50px;
+  height: 50px;
+  border: 2px solid red;
+  border-radius: 50px;
+  text-align: center;
+  color: red;
 }
 
 .numero-tabella {
   display: block;
 }
 
-.estrai-numero, .dichiarazione-premio {
+.estrai-numero, .dichiarazione-premio, .cambio-layout-tabella {
   font-size: 30px;
   margin-right: auto;
   margin-left: auto;
   display: block;
-  width: 50%;
   margin-bottom: 20px;
 }
 

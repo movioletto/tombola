@@ -71,7 +71,7 @@ var bindClickGiocatorePresente = function (url) {
 
           riga.forEach(function (numero) {
             tabella += '           <td style="width: 11.11%;" class="d-table-cell '
-                + (numero.uscito ? 'numero-uscito-tabella' : '') + '">';
+                + (numero.uscito ? 'numero-uscito-tabella' : '') + ' numero-' + numero.numero + '">';
             if (numero.numero !== 0) {
               tabella += '               ' + numero.numero;
             }
@@ -123,7 +123,7 @@ var bindClickEstraiNumero = function (url) {
       success: function (data) {
         disegnaNumeriUsciti(data);
 
-        $('#numero-' + data.numeroUscito).addClass('numero-uscito-tabella');
+        $('.numero-' + data.numeroUscito).addClass('numero-uscito-tabella');
 
         $('#estrai-numero').removeAttr('disabled');
       }
