@@ -2,59 +2,29 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <relativePath/>
+    <version>2.7.6</version>
+  </parent>
+
+  <groupId>it.movioletto</groupId>
   <artifactId>tombola</artifactId>
+  <version>1.1</version>
+  <name>Tombola semplice</name>
+  <description>Progetto del gioco della tombola da giocare insieme alle persone</description>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>
-              <artifactId>lombok</artifactId>
-              <groupId>org.projectlombok</groupId>
-            </exclude>
-            <exclude>
-              <artifactId>mapstruct-processor</artifactId>
-              <groupId>org.mapstruct</groupId>
-              <version>${org.mapstruct.version}</version>
-            </exclude>
-          </excludes>
-        </configuration>
-        <groupId>org.springframework.boot</groupId>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <annotationProcessorPaths>
-            <path>
-              <artifactId>mapstruct-processor</artifactId>
-              <groupId>org.mapstruct</groupId>
-              <version>${org.mapstruct.version}</version>
-            </path>
-            <path>
-              <artifactId>lombok</artifactId>
-              <groupId>org.projectlombok</groupId>
-              <version>${org.projectlombok.lombok.version}</version>
-            </path>
-            <path>
-              <artifactId>mapstruct-processor</artifactId>
-              <groupId>org.mapstruct</groupId>
-              <version>${org.mapstruct.version}</version>
-            </path>
-            <path>
-              <artifactId>lombok-mapstruct-binding</artifactId>
-              <groupId>org.projectlombok</groupId>
-              <version>${org.projectlombok.lombok-mapstruct-binding}</version>
-            </path>
-          </annotationProcessorPaths>
-        </configuration>
-        <groupId>org.apache.maven.plugins</groupId>
-        <version>3.8.1</version>
-      </plugin>
-    </plugins>
-  </build>
+  <properties>
+    <java.version>19</java.version>
+    <org.apache.commons>3.12.0</org.apache.commons>
+    <org.apache.commons.commons-lang3.version>3.12.0</org.apache.commons.commons-lang3.version>
+    <org.apache.maven.plugins.maven-compiler-plugin.version>3.8.1</org.apache.maven.plugins.maven-compiler-plugin.version>
+    <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
+    <org.projectlombok.lombok-mapstruct-binding>0.2.0</org.projectlombok.lombok-mapstruct-binding>
+    <org.projectlombok.lombok.version>1.18.24</org.projectlombok.lombok.version>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -107,26 +77,49 @@
     </dependency>
   </dependencies>
 
-  <groupId>it.movioletto</groupId>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>
+              <artifactId>lombok</artifactId>
+              <groupId>org.projectlombok</groupId>
+            </exclude>
+            <exclude>
+              <artifactId>mapstruct-processor</artifactId>
+              <groupId>org.mapstruct</groupId>
+            </exclude>
+          </excludes>
+        </configuration>
+        <groupId>org.springframework.boot</groupId>
+      </plugin>
 
-  <modelVersion>4.0.0</modelVersion>
-
-  <parent>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <groupId>org.springframework.boot</groupId>
-    <relativePath/>
-    <version>2.7.6</version>
-  </parent>
-
-  <properties>
-    <java.version>19</java.version>
-    <org.apache.commons>3.12.0</org.apache.commons>
-    <org.apache.commons.commons-lang3.version>3.12.0</org.apache.commons.commons-lang3.version>
-    <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
-    <org.projectlombok.lombok-mapstruct-binding>0.2.0</org.projectlombok.lombok-mapstruct-binding>
-    <org.projectlombok.lombok.version>1.18.24</org.projectlombok.lombok.version>
-  </properties>
-
-  <version>1.1</version>
-
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <artifactId>mapstruct-processor</artifactId>
+              <groupId>org.mapstruct</groupId>
+              <version>${org.mapstruct.version}</version>
+            </path>
+            <path>
+              <artifactId>lombok</artifactId>
+              <groupId>org.projectlombok</groupId>
+              <version>${org.projectlombok.lombok.version}</version>
+            </path>
+            <path>
+              <artifactId>lombok-mapstruct-binding</artifactId>
+              <groupId>org.projectlombok</groupId>
+              <version>${org.projectlombok.lombok-mapstruct-binding}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>${org.apache.maven.plugins.maven-compiler-plugin.version}</version>
+      </plugin>
+    </plugins>
+  </build>
 </project>
