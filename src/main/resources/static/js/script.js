@@ -70,10 +70,11 @@ var bindClickGiocatorePresente = function (url) {
           tabella += '        <tr>';
 
           riga.forEach(function (numero) {
-            tabella += '           <td style="width: 11.11%;" class="d-table-cell '
-                + (numero.uscito ? 'numero-uscito-tabella' : '') + ' numero-' + numero.numero + '">';
+            tabella += '           <td style="width: 11.11%;">';
             if (numero.numero !== 0) {
-              tabella += '               ' + numero.numero;
+              tabella += '              <span class="' + (numero.uscito ? 'numero-uscito-tabella' : '') + ' numero-' + numero.numero + '">';
+              tabella += '                  ' + numero.numero;
+              tabella += '              </span>';
             }
             tabella += '           </td>';
           });
