@@ -12,7 +12,7 @@
 
   <groupId>it.movioletto</groupId>
   <artifactId>tombola</artifactId>
-  <version>1.1</version>
+  <version>1.2</version>
   <name>Tombola semplice</name>
   <description>Progetto del gioco della tombola da giocare insieme alle persone</description>
 
